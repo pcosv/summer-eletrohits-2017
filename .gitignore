@@ -1,0 +1,2 @@
+# Um dos datasets tem 360MB, melhor não commitá-los ainda
+*.csv
