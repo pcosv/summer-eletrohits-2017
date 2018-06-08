@@ -118,14 +118,12 @@
 	}
 	
 	/**
-	 * The label table of the chart. If table is given, sets the label table. If no value is given, returns the current label table.
+	 * The label table of the chart. If table is given, sets the label table. Always returns the current or, if set, the new label table.
 	 * @param {LabelTable} table - The new label table.
-	 * @returns {(Chart|LabelTable)} The new label table.
+	 * @returns {LabelTable} The new label table.
 	 */
 	labelTable(table) {
-		if (table !== undefined) {
-			this._labelTable = table;
-		}
+		if (table) this._labelTable = table;
 		return this._labelTable;
 	}
 	
@@ -268,7 +266,6 @@ class Histogram extends Chart {
 			this._xScale
 				.domain([0, scale.domain().length - 3])
 				.range([scale.range()[1], scale.range()[scale.domain().length - 2]]);
-			console.log(this._xScale.range());
 			Chart.adjustScaleDomain(this._xAxisScale, this._xAxis, this._xAxisGroup, this._xAxisScale.domain());
 			return this;
 		} else {
@@ -307,8 +304,7 @@ class Histogram extends Chart {
 	colorScale(scale) {
 		if (scale) {
 			this._colorScale = scale;
-			let thisChart = this;
-			if (this._colSelection != null) this._colSelection.attr("fill", (d, i)=>(thisChart._colorScale(i % scale.range().length)));
+			if (this._colSelection != null) this._colSelection.attr("fill", (d, i)=>(this._colorScale(i % scale.range().length)));
 			return this;
 		} else {
 			return this._colorScale;
@@ -331,12 +327,12 @@ class Histogram extends Chart {
 		
 		//Mandatory attributes
 		if (attributes == null) attributes = [];
-		Chart.addIfNull(attributes, "id", (d, i)=>("col" + thisChart._xAxisScale.domain()[i+1]));
+		Chart.addIfNull(attributes, "id", (d, i)=>("col" + this._xAxisScale.domain()[i+1]));
 		attributes["class"] = "column";
-		Chart.addIfNull(attributes, "x", (d, i)=>(thisChart._xScale(i) - colWidth/2));
-		Chart.addIfNull(attributes, "y", (d, i)=>(thisChart._yScale(d)));
+		Chart.addIfNull(attributes, "x", (d, i)=>(this._xScale(i) - colWidth/2));
+		Chart.addIfNull(attributes, "y", (d, i)=>(this._yScale(d)));
 		Chart.addIfNull(attributes, "width", colWidth);
-		Chart.addIfNull(attributes, "height", (d, i)=>(thisChart._height - thisChart._yScale(d)));
+		Chart.addIfNull(attributes, "height", (d, i)=>(this._height - this._yScale(d)));
 		
 		//Column selection and color setting
 		this._colSelection = this._selection.selectAll(".column").data(dataset).enter().append("rect")
@@ -561,8 +557,6 @@ class Segments extends Chart {
 	 * @returns {Segments} This chart.
 	 */
 	setSegments(dataset, attributes, onEvents) {
-		let thisChart = this;
-		
 		//Adjusting the yScale and axis
 		let datasetExtent = dataset.map(d=>d3.extent(d));
 		datasetExtent.push(this._yScale.domain());
@@ -573,7 +567,7 @@ class Segments extends Chart {
 		if (attributes == null) attributes = [];
 		Chart.addIfNull(attributes, "id", (d, i)=>("seg" + i));
 		attributes["class"] = "segment";
-		Chart.addIfNull(attributes, "d", (d, i)=>(thisChart.segPathGenerator(d)));
+		Chart.addIfNull(attributes, "d", (d, i)=>(this.segPathGenerator(d)));
 		Chart.addIfNull(attributes, "stroke", "black");
 		
 		this._segSelection = this._segLayer.selectAll(".segment").data(dataset).enter().append("path")
@@ -582,10 +576,10 @@ class Segments extends Chart {
 		//Updating previous selections
 		if (this._dotSelection) {
 			this._dotSelection
-				.attr("cx", (d, i)=>thisChart._xScale(i))
-				.attr("cy", (d, i)=>thisChart._yScale(d));
+				.attr("cx", (d, i)=>this._xScale(i))
+				.attr("cy", (d, i)=>this._yScale(d));
 		}
-		if (this._rangeSelection) this._rangeSelection.attr("d", (d, i)=>(thisChart.rangePathGenerator(d)));
+		if (this._rangeSelection) this._rangeSelection.attr("d", (d, i)=>(this.rangePathGenerator(d)));
 		
 		//Insertion of attributes and events
 		Chart.insertAttributesEvents(this._segSelection, attributes, onEvents);
@@ -614,8 +608,8 @@ class Segments extends Chart {
 		Chart.addIfNull(attributes, "id", (d, i)=>("dotGroup" + i));
 		attributes["class"] = "dotGroup";
 		Chart.addIfNull(attributes, "r", "5px");
-		Chart.addIfNull(attributes, "cx", (d, i)=>thisChart._xScale(i));
-		Chart.addIfNull(attributes, "cy", (d, i)=>thisChart._yScale(d));
+		Chart.addIfNull(attributes, "cx", (d, i)=>this._xScale(i));
+		Chart.addIfNull(attributes, "cy", (d, i)=>this._yScale(d));
 		
 		//Creating the groups
 		this._dotSelection = this._dotLayer.selectAll(".dotGroup").data(dataset).enter().append("g")
@@ -625,10 +619,10 @@ class Segments extends Chart {
 			.selectAll(".groupDot").data(d=>d).enter().append("circle");
 		
 		//Updating previous selections
-		if (this._segSelection) this._segSelection.attr("d", (d, i)=>(thisChart.segPathGenerator(d)));
-		if (this._rangeSelection) this._rangeSelection.attr("d", (d, i)=>(thisChart.rangePathGenerator(d)));
+		if (this._segSelection) this._segSelection.attr("d", (d, i)=>(this.segPathGenerator(d)));
+		if (this._rangeSelection) this._rangeSelection.attr("d", (d, i)=>(this.rangePathGenerator(d)));
 		
-		attributes["id"] = (d, i)=>("dot_" + thisChart._xAxisScale.domain()[i]);
+		attributes["id"] = (d, i)=>("dot_" + this._xAxisScale.domain()[i]);
 		attributes["class"] = "groupDot";
 		
 		//Insertion of attributes and events
@@ -659,7 +653,7 @@ class Segments extends Chart {
 		if (attributes == null) attributes = [];
 		Chart.addIfNull(attributes, "id", (d, i)=>("range" + i));
 		attributes["class"] = "range";
-		Chart.addIfNull(attributes, "d", (d, i)=>(thisChart.rangePathGenerator(d)));
+		Chart.addIfNull(attributes, "d", (d, i)=>(this.rangePathGenerator(d)));
 		
 		this._rangeSelection = this._rangeLayer.selectAll(".range").data(dataset).enter().append("path")
 			.attr("fill", (d, i)=>(thisChart._rangeColorScale(i % thisChart._rangeColorScale.domain().length)));
@@ -667,10 +661,10 @@ class Segments extends Chart {
 		//Updating previous selections
 		if (this._dotSelection) {
 			this._dotSelection
-				.attr("cx", (d, i)=>thisChart._xScale(i))
-				.attr("cy", (d, i)=>thisChart._yScale(d));
+				.attr("cx", (d, i)=>this._xScale(i))
+				.attr("cy", (d, i)=>this._yScale(d));
 		}
-		if (this._segSelection) this._segSelection.attr("d", (d, i)=>(thisChart.segPathGenerator(d)));
+		if (this._segSelection) this._segSelection.attr("d", (d, i)=>(this.segPathGenerator(d)));
 		
 		//Insertion of attributes and events
 		Chart.insertAttributesEvents(this._rangeSelection, attributes, onEvents);
@@ -846,7 +840,7 @@ class Map extends Chart {
 		if (attributes == null) attributes = [];
 		Chart.addIfNull(attributes, "id", (d, i)=>d.properties.L1);
 		attributes["class"] = "mapPath";
-		Chart.addIfNull(attributes, "d", (d, i)=>thisChart._geoPath(d.geometry));
+		Chart.addIfNull(attributes, "d", (d, i)=>this._geoPath(d.geometry));
 		
 		this._pathSelection = this._selection.selectAll(".mapPath").data(geojson.features).enter().append("path")
 			.attr("fill", (d, i)=>thisChart._fillFunction(d, i));
@@ -1059,8 +1053,8 @@ class Scatterplot extends Chart {
 		if (attributes == null) attributes = [];
 		Chart.addIfNull(attributes, "id", (d, i)=>("dot" + i));
 		attributes["class"] = "dot";
-		Chart.addIfNull(attributes, "cx", (d, i)=>(thisChart._xScale(d[0])));
-		Chart.addIfNull(attributes, "cy", (d, i)=>(thisChart._yScale(d[1])));
+		Chart.addIfNull(attributes, "cx", (d, i)=>(this._xScale(d[0])));
+		Chart.addIfNull(attributes, "cy", (d, i)=>(this._yScale(d[1])));
 		Chart.addIfNull(attributes, "r", "4px");
 		
 		//Dot selection and color setting
@@ -1197,7 +1191,7 @@ class Pie extends Chart {
 		if (attributes == null) attributes = [];
 		Chart.addIfNull(attributes, "id", (d, i)=>("slice" + i));
 		attributes["class"] = "slice";
-		Chart.addIfNull(attributes, "d", (d, i)=>(thisChart.genSlice(d, i)()));
+		Chart.addIfNull(attributes, "d", (d, i)=>(this.genSlice(d, i)()));
 		
 		//Slice sliceSelection and color setting
 		this._sliceSelection = this._selection.selectAll(".slice").data(dataset).enter().append("path")
@@ -1217,7 +1211,6 @@ class Pie extends Chart {
 	 * @returns {Pie} This chart.
 	 */
 	setSliceLabels(labels, attributes, onEvents) {
-		let thisChart = this;
 		let centroids = this._sliceSelection.data().map((d, i)=>this.genSlice(d, i).centroid());
 		
 		//Mandatory attributes
@@ -1260,6 +1253,190 @@ class Pie extends Chart {
 			this._sliceSelection.remove();
 			this._sliceSelection = null;
 			this._pieData = null;
+		}
+		if (this._labelSelection) {
+			this._labelSelection.remove();
+			this._labelSelection = null;
+		}
+		return super.clear();
+	}
+}
+
+/**
+ * Class that represents a Star Glyph.
+ * @extends Chart
+ */
+class StarGlyph extends Chart {
+	/**
+	 * @constructor
+	 * @param {d3.selection} container - The tag in which the chart will be inserted.
+	 * @param {string} id - The id of the chart tag.
+	 * @param {Object} position - The position of the chart.
+	 * @param {number} position.x - The X coordinate of the chart.
+	 * @param {number} position.y - The Y coordinate of the chart.
+	 * @param {(number|Object)} margins - The margins of the chart. If a number is passed, all its values will be the same.
+	 * @param {number} margins.left - Left margin of the chart.
+	 * @param {number} margins.right - Right margin of the chart.
+	 * @param {number} margins.top - Upper margin of the chart.
+	 * @param {number} margins.bottom - Lower margin of the chart.
+	 * @param {Object} dimensions - The dimensions of the chart.
+	 * @param {number} dimensions.width - The width of the chart, counting the margins.
+	 * @param {number} dimensions.height - The height of the chart, counting the margins.
+	 */
+	constructor(container, id, position, margins, dimensions) {
+		super(container, id, position, margins, dimensions, "starGlyphChart");
+		
+		this._selection.attr("transform", "translate(" + (this._margins.left + this._width / 2) + "," + (this._margins.top + this._height / 2) + ")");
+		
+		this._polygonSelection = null;
+		
+		this._labelSelection = null;
+		
+		this._scales = [];
+		
+		this._pathGenerator = d3.lineRadial()
+			.angle((d, i)=>(this._getAngle(i)))
+			.radius((d, i)=>this._scales[i % this._scales.length](d));
+		
+		this._fillFunction = (d, i)=>"blue";
+	}
+	
+	/**
+	 * Returns the selection of the polygon of the chart.
+	 * @returns {d3.selection} The polygon of this chart.
+	 */
+	polygonSelection() {
+		return this._polygonSelection;
+	}
+	
+	/**
+	 * Returns the selection of the labels of each corner.
+	 * @returns {d3.selection} The labels of the corners.
+	 */
+	labelSelection() {
+		return this._labelSelection;
+	}
+	
+	/**
+	 * A path generator for the polygon. If gen is given, sets it, otherwise returns the current pathGenerator.
+	 * @param {d3.line} gen - The new pathGenerator.
+	 * @returns {(StarGlyph|d3.lineRadial)} This object or the current pathGenerator.
+	 */
+	pathGenerator(gen) {
+		if (gen) {
+			this._pathGenerator = gen;
+			return this;
+		} else {
+			return this._pathGenerator;
+		}
+	}
+	
+	/**
+	 * The function which sets the color of the polygon. If func is given, sets it, otherwise returns the current fillFunction.
+	 * @param {function} func - The new fillFunction.
+	 * @returns {(StarGlyph|function)} This object or the current fillFunction.
+	 */
+	fillFunction(func) {
+		if (func) {
+			this._fillFunction = func;
+			return this;
+		} else {
+			return this._fillFunction;
+		}
+	}
+	
+	/**
+	 * The function which sets the domains of every variable scale.
+	 * @param {newDomains} - The new domains of the chart scales.
+	 * @returns {StarGlyph} This chart.
+	 */
+	setScaleDomains(newDomains) {
+		this._scales = [];
+		for (let i in newDomains) {
+			this._scales[i] = d3.scaleLinear()
+				.domain(newDomains[i])
+				.range([0, d3.min([this._width, this._height]) / 2]);
+		}
+		return this;
+	}
+	
+	/** 
+	 * Inserts data on the star glyph and plots it.
+	 * @param {number[]} dataset - An array of values for the polygon.
+	 * @param {Object} attributes - An object containing functions or constants for attributes of the polygon.
+	 * @param {Object} onEvents - An object containing functions for events.
+	 * @returns {StarGlyph} This chart.
+	 */
+	setData(dataset, attributes, onEvents) {
+		//Mandatory attributes
+		if (attributes == null) attributes = [];
+		Chart.addIfNull(attributes, "id", (d, i)=>("polygon" + i));
+		attributes["class"] = "polygon";
+		Chart.addIfNull(attributes, "d", (d, i)=>(this._pathGenerator(d, i)));
+		
+		dataset.push(dataset[0]);	//With this, the path will be closed
+		this._polygonSelection = this._selection.selectAll(".polygon").data([dataset]).enter().append("path")
+			.attr("fill", this._fillFunction);
+		
+		//Insertion of attributes and events
+		Chart.insertAttributesEvents(this._polygonSelection, attributes, onEvents);
+		
+		return this;
+	}
+	
+	/** 
+	 * Sets the labels at the corners.
+	 * @param {string[]} labels - An array of values for the labels.
+	 * @param {Object} attributes - An object containing functions or constants for attributes of the labels.
+	 * @param {Object} onEvents - An object containing functions for events.
+	 * @returns {StarGlyph} This chart.
+	 */
+	setCornerLabels(labels, attributes, onEvents) {
+		let radius = d3.min([this._width, this._height]) / 2 + 3;
+		
+		//Mandatory attributes
+		if (attributes == null) attributes = [];
+		attributes["class"] = "cornerLabel";
+		Chart.addIfNull(attributes, "x", (d, i)=>(Math.sin(this._getAngle(i)) * radius));
+		Chart.addIfNull(attributes, "y", (d, i)=>(-Math.cos(this._getAngle(i)) * radius));
+		Chart.addIfNull(attributes, "text-anchor", (d, i)=>this._getTextAnchor(i));
+		Chart.addIfNull(attributes, "dominant-baseline", (d, i)=>this._getDominantBaseline(i));
+		
+		this._labelSelection = this._selection.selectAll(".cornerLabel").data(labels).enter().append("text")
+			.text((d, i)=>d);
+		
+		//Insertion of attributes and events
+		Chart.insertAttributesEvents(this._labelSelection, attributes, onEvents);
+		
+		return this;
+	}
+	
+	_getAngle(i) {
+		return 2 * Math.PI * i / this._scales.length;
+	}
+	
+	_getTextAnchor(i) {
+		let sine = Math.sin(this._getAngle(i));
+		return (sine < -1e-6) ? "end"
+			: (sine > 1e-6) ? "start"
+			: "middle";
+	}
+	
+	_getDominantBaseline(i) {
+		let cosine = Math.cos(this._getAngle(i));
+		return (cosine < -1e-6) ? "hanging"
+			: (cosine > 1e-6) ? "baseline"
+			: "middle";
+	}
+	
+	/** 
+	 * Clears the chart, removing all plottings.
+	 * @returns {StarGlyph} This chart.
+	 */
+	clear() {
+		if (this._polygonSelection) {
+			this._polygonSelection.remove();
+			this._polygonSelection = null;
 		}
 		if (this._labelSelection) {
 			this._labelSelection.remove();

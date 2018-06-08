@@ -13,10 +13,8 @@ d3.json("custom.geojson", function(error, geoData) {
 	mapa.fillValue((d, i)=> d ? 0 : 1)
 		.projection(d3.geoNaturalEarth1())
 		.setMap(geoData, {id: (d, i)=>d.properties.name})
-		.labelTable(new LabelTable(mapa, "legenda", {x: 0, y: 450}, 0, {width: 340, height: 80}));
-	
-	mapa.labelTable()
-		.setValues([0, 1].map((d, i) => mapa.colorScheme()(i)), 
+		.labelTable(new LabelTable(mapa, "legenda", {x: 0, y: 450}, 0, {width: 340, height: 80}))
+			.setValues([0, 1].map((d, i) => mapa.colorScheme()(i)), 
 				["Temos dados", "Não temos dados"],
 				null,
 				{"font-size": "40"});
