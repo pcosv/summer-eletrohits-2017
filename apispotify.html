@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script type="text/javascript" src="https://d3js.org/d3.v4.js"></script>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script type="text/javascript" src= "urls.json"></script>
+	<script type="text/javascript" >
+	console.log(urls)		
+		var uri = '';
+		var resposta = new Array();
+		var count = 0;
+		for(var i = 0; i < 217; i++){
+
+			setTimeout(function(count) {
+
+				for (var j = 0; j < 100; j++) {
+				
+					uri += urls[count][j] + ',';
+
+				}
+				$.ajax({
+				    url: 'https://api.spotify.com/v1/audio-features?ids='+uri,
+				    type: 'GET',
+				    headers: {
+				        'Authorization' : 'Bearer BQBrnTIfuTMwGDaPn97FJGVUcUZlUEMTsDeJdWhmwiWkBYfdkMjCkd8owTz8FZqwG6VW9-BWss7_xE1HSI-28TIDnP3JAVRFvIdrcX3S8SLKzes0sJFuQLlcB0CLvVDQqnqqPhAUlzwpvYI-ZE-oMvwMC6M'
+				    }, success: function(data) {
+						resposta[count] = data;
+					}
+				});
+				uri = '';
+
+			}, 500, i);
+		}
+		
+	</script>
+</head>
+<body>
+</body>
+</html>
