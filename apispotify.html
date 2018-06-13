@@ -6,10 +6,12 @@
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script type="text/javascript" src= "urls.json"></script>
 	<script type="text/javascript" >
-	console.log(urls)		
+	
 		var uri = '';
 		var resposta = new Array();
 		var count = 0;
+		var token = 'BQBEeg4lMbeT1GFHPpWhXOhCZkIOJv89KNr8tQ_CUMuYcxV2agGJrVQ65bEllsfi2L8yaIQMdYV6lGSH0pqepE7dlmw0KxFP66RFoGT0guyg2H1lFjRSJW8wyoyfmwSJoQSFIsNnb1UbON0ShJxYsaRs';
+
 		for(var i = 0; i < 217; i++){
 
 			setTimeout(function(count) {
@@ -20,19 +22,26 @@
 
 				}
 				$.ajax({
-				    url: 'https://api.spotify.com/v1/audio-features?ids='+uri,
+				    url: 'https://api.spotify.com/v1/audio-features?ids=' + uri,
 				    type: 'GET',
 				    headers: {
-				        'Authorization' : 'Bearer BQBrnTIfuTMwGDaPn97FJGVUcUZlUEMTsDeJdWhmwiWkBYfdkMjCkd8owTz8FZqwG6VW9-BWss7_xE1HSI-28TIDnP3JAVRFvIdrcX3S8SLKzes0sJFuQLlcB0CLvVDQqnqqPhAUlzwpvYI-ZE-oMvwMC6M'
+				        'Authorization' : 'Bearer ' + token
 				    }, success: function(data) {
 						resposta[count] = data;
 					}
 				});
 				uri = '';
-
-			}, 500, i);
+				console.log(count);
+			}, 100*i, i);
 		}
 		
+		var div = document.createElement("div");
+		document.getElementsByTagName('body')[0].append(div)
+
+		// setTimeout(function(){
+		// 	document.getElementById('div').innerText = resposta;
+		// }, 21800);
+
 	</script>
 </head>
 <body>
