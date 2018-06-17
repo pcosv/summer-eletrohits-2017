@@ -10,7 +10,7 @@
 		var uri = '';
 		var resposta = new Array();
 		var count = 0;
-		var token = 'BQBEeg4lMbeT1GFHPpWhXOhCZkIOJv89KNr8tQ_CUMuYcxV2agGJrVQ65bEllsfi2L8yaIQMdYV6lGSH0pqepE7dlmw0KxFP66RFoGT0guyg2H1lFjRSJW8wyoyfmwSJoQSFIsNnb1UbON0ShJxYsaRs';
+		var token = 'BQAMrqjg0Kuu9VXv83Na3CnL7JqnfuEuoKHbbwXCD_P6ZSb2S1xLVZ0tb4iJ_ZKZpfARuPVrEaUJEGmN3i1p57G3gLwm2NVAAsGxxI2FnCUDjY5DawfXJbspBl2DZXcoAZM-UyaEt_Zb10yaVpb21ZkJ';
 
 		for(var i = 0; i < 217; i++){
 
@@ -27,7 +27,7 @@
 				    headers: {
 				        'Authorization' : 'Bearer ' + token
 				    }, success: function(data) {
-						resposta[count] = data;
+						resposta = resposta.concat(data["audio_features"]);
 					}
 				});
 				uri = '';
