@@ -8,39 +8,147 @@
 	<script type="text/javascript" >
 	
 		var uri = '';
-		var resposta = new Array();
+		var respostaArtists = new Array();
+		var respostaFeatures = new Array();
+		var respostaGenres = new Array();
 		var count = 0;
-		var token = 'BQAMrqjg0Kuu9VXv83Na3CnL7JqnfuEuoKHbbwXCD_P6ZSb2S1xLVZ0tb4iJ_ZKZpfARuPVrEaUJEGmN3i1p57G3gLwm2NVAAsGxxI2FnCUDjY5DawfXJbspBl2DZXcoAZM-UyaEt_Zb10yaVpb21ZkJ';
+		var token = 'BQBycO8zqDsHQjgvLPY_LOo8CZRpv5DByV9KgQQ9X7hAYx9flgBCMauu_qd2ufW0-LljKUDjY4rfDNEJxkQ9xbPJPEJ18ETINeKn8m5OdGCtgD-Qdpfy8TZudo3EJT4eigYodpDCTaBf11ALvwTYN1T3';
 
-		for(var i = 0; i < 217; i++){
-
-			setTimeout(function(count) {
-
-				for (var j = 0; j < 100; j++) {
-				
-					uri += urls[count][j] + ',';
-
-				}
-				$.ajax({
-				    url: 'https://api.spotify.com/v1/audio-features?ids=' + uri,
-				    type: 'GET',
-				    headers: {
-				        'Authorization' : 'Bearer ' + token
-				    }, success: function(data) {
-						resposta = resposta.concat(data["audio_features"]);
-					}
-				});
-				uri = '';
-				console.log(count);
-			}, 100*i, i);
+		function download(data, filename, type) {
+			var file = new Blob([data], {type: type});
+			if (window.navigator.msSaveOrOpenBlob) // IE10+
+				window.navigator.msSaveOrOpenBlob(file, filename);
+			else { // Others
+				var a = document.createElement("a"),
+				var url = URL.createObjectURL(file);
+				a.href = url;
+				a.download = filename;
+				document.body.appendChild(a);
+				a.click();
+				setTimeout(function() {
+					document.body.removeChild(a);
+					window.URL.revokeObjectURL(url);  
+				}, 0); 
+			}
 		}
-		
-		var div = document.createElement("div");
-		document.getElementsByTagName('body')[0].append(div)
 
-		// setTimeout(function(){
-		// 	document.getElementById('div').innerText = resposta;
-		// }, 21800);
+		function getArtists(){
+			for(var i = 0; i < 217; i++){
+
+				setTimeout(function(count) {
+
+					for (var j = 0; j < 50; j++) {
+						if(j != 49){
+							uri += urls[count][j] + ',';
+						} else {
+							uri += urls[count][j];
+						}
+					}
+					$.ajax({
+						url: 'https://api.spotify.com/v1/tracks?ids=' + uri+'&market=BR',
+						type: 'GET',
+						headers: {
+							'Authorization' : 'Bearer ' + token
+						}, success: function(data) {
+							for (var i = 0; i < 50; i++) {
+								respostaArtists = respostaArtists.concat(JSON.parse( "{ \"song\" : \""+data["tracks"][i]["id"]+"\",  \"id\" :\""+data["tracks"][i]["artists"][0]["id"]+"\", \"name\" : \""+data["tracks"][i]["artists"][0]["name"].replace("\"", "'").replace("\"", "'").replace("\\", "")+"\"}" ));
+							}
+						}
+					});
+					uri = '';
+					console.log(count);
+				}, 200*i, i);
+
+				setTimeout(function(count) {
+
+					for (var j = 50; j < 100; j++) {
+						if(j != 99){
+							uri += urls[count][j] + ',';
+						} else {
+							uri += urls[count][j];
+						}
+					}
+					$.ajax({
+						url: 'https://api.spotify.com/v1/tracks?ids=' + uri+'&market=BR',
+						type: 'GET',
+						headers: {
+							'Authorization' : 'Bearer ' + token
+						}, success: function(data) {
+							for (var i = 0; i < 50; i++) {
+
+								respostaArtists = respostaArtists.concat(JSON.parse( "{ \"song\" : \""+data["tracks"][i]["id"]+"\",  \"id\" :\""+data["tracks"][i]["artists"][0]["id"]+"\", \"name\" : \""+data["tracks"][i]["artists"][0]["name"].replace("\"", "'").replace("\"", "'").replace("\\", "")+"\"}" ));
+							}
+						}
+					});
+					uri = '';
+					console.log(count);
+				}, 240*(i+0.5), i);
+			}
+			
+		}
+
+		// download(JSON.stringify(resposta, null, "\t"), "trackArtists.json", "text/plain");
+
+		function getFeatures(){
+			for(var i = 0; i < 217; i++){
+
+				setTimeout(function(count) {
+
+					for (var j = 0; j < 100; j++) {
+					
+						uri += urls[count][j] + ',';
+
+					}
+					$.ajax({
+						url: 'https://api.spotify.com/v1/audio-features?ids=' + uri,
+						type: 'GET',
+						headers: {
+							'Authorization' : 'Bearer ' + token
+						}, success: function(data) {
+							respostaFeatures = respostaFeatures.concat(data["audio_features"]);
+						}
+					});
+					uri = '';
+	
+				}, 120*i, i);
+			}
+		}
+
+		// download(JSON.stringify(resposta, ["id", "energy", "loudness", "speechiness", "instrumentalness", "liveness", "valence", "id"], "\t"), "trackFeatures.json", "text/plain");
+
+		function getGenres(){
+
+			var uris = '';
+			for(var i = 0; i < 21700; i++){
+				if(uris){
+					uris += ','+respostaArtists[i]["id"];
+				} else {
+					uris += respostaArtists[i]["id"];
+				}
+				
+				if((i+1)%50 === 0 && i !== 0){
+
+					setTimeout(function(uri) {
+
+					$.ajax({
+						url: 'https://api.spotify.com/v1/artists?ids=' + uri ,
+						type: 'GET',
+						headers: {
+							'Authorization' : 'Bearer ' + token
+						}, success: function(data) {
+								for (var j = 0; j < 50; j++) {
+									respostaGenres = respostaGenres.concat(JSON.parse( "{ \"artist\" : \""+data["artists"][j]["id"]+"\", \"genres\" : \"/"+data["artists"][j]["genres"].join('/')+"/\"}" ));
+								}
+							}
+						});
+					}, 120*(i/50), uris);
+
+					uris = '';
+				}
+			}
+		}
+
+		// download(JSON.stringify(respostaGenres, null, "\t"), "artistsGenre.json", "text/plain");
 
 	</script>
 </head>
