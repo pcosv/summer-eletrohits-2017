@@ -18,11 +18,11 @@ d3.csv("featuresdf.csv", function(erro, csvData) {
 	
 	let scatterplots = [];
 	for (let x in nomesFeatures) {
-		let ordenado = csvData.sort((a, b)=>(parseFloat(a[nomesFeatures[x]]) - parseFloat(b[nomesFeatures[x]])));
+		let ordenado = csvData.sort((a, b)=>(Number(a[nomesFeatures[x]]) - Number(b[nomesFeatures[x]])));
 		let atributos = {
 			id: (d, i)=>d.name,
 			cx: (d, i)=>scatterplots[x].xScale()(i),
-			cy: (d, i)=>scatterplots[x].yScale()(parseFloat(d[nomesFeatures[x]])),
+			cy: (d, i)=>scatterplots[x].yScale()(Number(d[nomesFeatures[x]])),
 			r: "2.5px"
 		};
 		let eventos = {
