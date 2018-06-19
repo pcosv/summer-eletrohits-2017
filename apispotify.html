@@ -5,14 +5,18 @@
 	<script type="text/javascript" src="https://d3js.org/d3.v4.js"></script>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script type="text/javascript" src= "urls.json"></script>
+	<script type="text/javascript" src= "trackArtists.json"></script>
+	<script type="text/javascript" src= "trackFeatures.json"></script>
+	<script type="text/javascript" src= "artistsGenres.json"></script>
 	<script type="text/javascript" >
-	
+
 		var uri = '';
+		var genre = '';
 		var respostaArtists = new Array();
 		var respostaFeatures = new Array();
 		var respostaGenres = new Array();
 		var count = 0;
-		var token = 'BQBycO8zqDsHQjgvLPY_LOo8CZRpv5DByV9KgQQ9X7hAYx9flgBCMauu_qd2ufW0-LljKUDjY4rfDNEJxkQ9xbPJPEJ18ETINeKn8m5OdGCtgD-Qdpfy8TZudo3EJT4eigYodpDCTaBf11ALvwTYN1T3';
+		var token = 'BQDPAM2h74frOlJWFOqQmFO3vJgfjJoss-qrdaoW516PSp2WjRLeTPrRQGgSdB3t6fNHif7vACi7XYn4BoWlZik4Sx6MAXwSJT4ufUyskN7myRLSK_QbMNEDzFQHMeyPwce3JXRkD7quxgIVKDib3JFJ';
 
 		function download(data, filename, type) {
 			var file = new Blob([data], {type: type});
@@ -20,7 +24,7 @@
 				window.navigator.msSaveOrOpenBlob(file, filename);
 			else { // Others
 				var a = document.createElement("a"),
-				var url = URL.createObjectURL(file);
+					url = URL.createObjectURL(file);
 				a.href = url;
 				a.download = filename;
 				document.body.appendChild(a);
@@ -57,7 +61,7 @@
 					});
 					uri = '';
 					console.log(count);
-				}, 200*i, i);
+				}, 240*i, i);
 
 				setTimeout(function(count) {
 
@@ -87,7 +91,7 @@
 			
 		}
 
-		// download(JSON.stringify(resposta, null, "\t"), "trackArtists.json", "text/plain");
+		// download(JSON.stringify(respostaArtists, null, "\t"), "trackArtists.json", "text/plain");
 
 		function getFeatures(){
 			for(var i = 0; i < 217; i++){
@@ -114,8 +118,8 @@
 			}
 		}
 
-		// download(JSON.stringify(resposta, ["id", "energy", "loudness", "speechiness", "instrumentalness", "liveness", "valence", "id"], "\t"), "trackFeatures.json", "text/plain");
-
+		// download(JSON.stringify(respostaFeatures, ["id", "energy", "loudness", "speechiness", "instrumentalness", "liveness", "valence", "id"], "\t"), "trackFeatures.json", "text/plain");
+		
 		function getGenres(){
 
 			var uris = '';
@@ -137,7 +141,11 @@
 							'Authorization' : 'Bearer ' + token
 						}, success: function(data) {
 								for (var j = 0; j < 50; j++) {
-									respostaGenres = respostaGenres.concat(JSON.parse( "{ \"artist\" : \""+data["artists"][j]["id"]+"\", \"genres\" : \"/"+data["artists"][j]["genres"].join('/')+"/\"}" ));
+									if(!genre){
+										genre += "{ \""+data["artists"][j]["id"]+"\" : \"/"+data["artists"][j]["genres"].join('/')+"/\""
+									} else {
+										genre += ", \""+data["artists"][j]["id"]+"\" : \"/"+data["artists"][j]["genres"].join('/')+"/\"";
+									}
 								}
 							}
 						});
@@ -145,10 +153,15 @@
 
 					uris = '';
 				}
+				respostaGenres = JSON.parse(genre+"}");
+
+				for (var i = 0; i < 21700; i++){
+					respostaArtists[i].genres = respostaGenres[respostaArtists[i]["id"]];
+				}
 			}
 		}
 
-		// download(JSON.stringify(respostaGenres, null, "\t"), "artistsGenre.json", "text/plain");
+		// download(JSON.stringify(respostaGenres, null, "\t"), "artistsGenres.json", "text/plain");
 
 	</script>
 </head>
