@@ -1,5 +1,5 @@
 # Um dos datasets tem 360MB, melhor não commitá-los ainda
-*.csv
+# *.csv
 
 
 # Created by https://www.gitignore.io/api/linux,macos,windows
