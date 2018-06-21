@@ -53,7 +53,7 @@
 						uri += idsByCountry[countries[i]][j];
 
 						setTimeout(function(uri, market) {
-
+							console.log(uri);
 							$.ajax({
 								url: 'https://api.spotify.com/v1/tracks?ids=' + uri + '&market=' + market,
 								type: 'GET',
@@ -73,7 +73,7 @@
 									respostaArtists = respostaArtists.concat(data["tracks"]);
 								}
 							});
-						}, 120*counter, uri, countries[i]);
+						}, 200*counter, uri, countries[i]);
 						counter++;
 						uri = '';
 					}
