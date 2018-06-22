@@ -18,8 +18,9 @@ with open("extractedFeatures.csv", newline = '', encoding="utf-8") as csvFeature
 			# Inclusão dos dados no csv
 			datareader = csv.reader(csvData, delimiter = ',')
 			spamwriter = csv.writer(saida, delimiter = ',')
-			spamwriter.writerow(["Position", "Track Name", "Artist", "Streams", "URL", "Date", "Region", "artist_id", "genres", "energy", "instrumentalness", "liveness", "loudness", "speechiness", "valence", "danceability", "acousticness", "tempo"])
+			spamwriter.writerow(["Position", "Track Name", "Artist", "Streams", "ID", "Date", "Region", "artist_id", "genres", "energy", "instrumentalness", "liveness", "loudness", "speechiness", "valence", "danceability", "acousticness", "tempo"])
 			for row in datareader:
 				if (row[4][31:] in features):
-					row.extend(features[row[4][31:]])
+					row[4] = row[4][31:]
+					row.extend(features[row[4]])
 					spamwriter.writerow(row)
