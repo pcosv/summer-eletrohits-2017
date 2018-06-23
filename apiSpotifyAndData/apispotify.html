@@ -19,7 +19,7 @@
 		var respostaFeatures = new Array();
 		var respostaGenres = new Array();
 		var count = 0;
-		var token = 'BQALV6uyvMYIj4m53necRBhnY7kNad-LtGFEKg3KhT8JoZPHTJePMVm1exYwhyVwwSbf7nBExPop8acqIcToLTuP_uz_hO5nxUuLH8AaQ3f9zGmjwY0jz2TTZTYdKqfr0iDEIEaLJvdGg6px8go5jpF1';
+		var token = 'BQCECc8Osbse4wX9SrOi0wbc4OFzSjmbbl1x3t4opisWXhOSyOjPcNdAbfWqGnKNJCWcHWuEyJGFoUDk8UUJtR3COAxAuXfYEZ5eEU1DZOdlhnmZPt93osUE-J8SH8DCPb5TRg4lFLWJADxeNWgqgUGYEtIRi1GPWNPT1_7VBscarSHSBTmSDHATZtvNT98NzylQE5xtHr4pohG31RcKuyCjgdVrQ-cUfM8RM73SBVxJZf52WP2fWRUSKgVSi9EofW0x0-od7Ba74GrUXQ';
 
 		function download(data, filename, type) {
 			var file = new Blob([data], {type: type});
@@ -38,42 +38,38 @@
 				}, 0); 
 			}
 		}
-			
-		// respostaArtistsString = '';
+
+
 		function getArtists(){
 			counter = 0;
-			// respostaArtistsString = '{';
+
 			for(var i = 0; i < countries.length; i++){
 				uri = '';
-				for(var j=0; j < idsByCountry[countries[i]].length; j++){
+				
+				for(var j = 0; j < idsByCountry[countries[i]].length; j++){
 
 					if(!((j+1)%50 == 0 || j == idsByCountry[countries[i]].length-1)){
 						uri += idsByCountry[countries[i]][j] + ',';
 					} else {
 						uri += idsByCountry[countries[i]][j];
 
-						setTimeout(function(uri, market) {
-							console.log(uri);
+						setTimeout(function(uris, market) {
+
 							$.ajax({
-								url: 'https://api.spotify.com/v1/tracks?ids=' + uri + '&market=' + market,
+								url: 'https://api.spotify.com/v1/tracks?ids=' + uris + '&market=' + market,
 								type: 'GET',
 								headers: {
 									'Authorization' : 'Bearer ' + token
 								}, success: function(data) {
-									console.log(uri);
-									// console.log(data['tracks']);
-									// for (var k = 0; k <= j%50; k++) {
-										// if(respostaArtistsString.length >1){
-										// 	respostaArtistsString+= ",\""+data["tracks"][k]["id"]+"\" :{ \"id\" :\""+data["tracks"][k]["artists"][0]["id"]+"\", \"name\" : \""+data["tracks"][k]["artists"][0]["name"].replace('"', "'").replace('"', "'").replace("\\", "")+"\"}";
-										// } else {
-										// 	respostaArtistsString+= "\""+data["tracks"][k]["id"]+"\" :{ \"id\" :\""+data["tracks"][k]["artists"][0]["id"]+"\", \"name\" : \""+data["tracks"][k]["artists"][0]["name"].replace('"', "'").replace('"', "'").replace("\\", "")+"\"}";
-										// }
+
+									for (var k = 0; k < data["tracks"].length; k++) {
+
 										// respostaArtists = respostaArtists.concat(JSON.parse( "{\"song\":\""+data["tracks"][k]["id"]+"\", \"id\" :\""+data["tracks"][k]["artists"][0]["id"]+"\", \"name\" : \""+data["tracks"][k]["artists"][0]["name"].replace('"', "'").replace('"', "'").replace("\\", "")+"\"}" ));
-									// }
-									respostaArtists = respostaArtists.concat(data["tracks"]);
+										respostaArtists = respostaArtists.concat(JSON.parse( "{\""+data["tracks"][k]["id"]+"\" : \""+data["tracks"][k]["artists"][0]["id"]+"\"}" ));
+									}
 								}
 							});
-						}, 200*counter, uri, countries[i]);
+						}, 120*counter, uri, countries[i]);
 						counter++;
 						uri = '';
 					}
