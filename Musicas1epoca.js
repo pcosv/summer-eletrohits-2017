@@ -74,7 +74,7 @@ d3.json("custom.geojson", (erro, jsonData)=>{
 				.setData(averageFeats, null, {
 					mouseover: (d, i)=>{
 						mapa.selection().append("text")
-							.text(d3.format(".3f")(d))
+							.text(d ? d3.format(".3f")(d) : undefined)
 							.attr("class", "legendaMapa")
 							.attr("dominant-baseline", "hanging");
 					},
