@@ -15,6 +15,25 @@ function calculateMean(weights, values) {
 	return sum / d3.sum(weights);
 }
 
+// Busca em um array nested todos os valores mapeados por uma data dentro de um determinado intervalo.
+function queryDate(nest, minDate, maxDate) {
+	let output = []
+	for (date in nest) {
+		let splittedDate = date.split("-");
+		splittedDate[0] = splittedDate[0].substring(1);
+		splittedDate = splittedDate.map(Number);
+		
+		if (splittedDate.length == 3) {
+			let inRange = true;
+			for (i in splittedDate) {
+				if ((minDate[i] > splittedDate[i]) || (splittedDate[i] > maxDate[i])) inRange = false;
+			}
+			if (inRange) output.push(nest[date]);
+		}
+	}
+	return d3.merge(output);
+}
+
 // Gera as médias de cada país.
 function generateMeans(countriesMusic, musicFeats) {
 	return countriesMusic.map(d=>{
@@ -22,8 +41,9 @@ function generateMeans(countriesMusic, musicFeats) {
 			let dateNest = d3.nest()
 				.key(d=>d.Date)
 				.map(d);
-			let musicStreams = dateNest["$2017-01-01"].map(e=>Number(e.Streams));
-			let musicIds = dateNest["$2017-01-01"].map(e=>e.URL.substring(31, e.URL.length - 1));
+			let queryResult = queryDate(dateNest, [2017, 1, 1], [2018, 1, 31]);
+			let musicStreams = queryResult.map(e=>Number(e.Streams));
+			let musicIds = queryResult.map(e=>e.URL.substring(31, e.URL.length - 1));
 			let avgValence = calculateMean(musicStreams, musicIds.map(e=>musicFeats["$" + e][0].valence));
 			return avgValence;
 		}
@@ -54,7 +74,7 @@ d3.json("custom.geojson", (erro, jsonData)=>{
 				.setData(averageFeats, null, {
 					mouseover: (d, i)=>{
 						mapa.selection().append("text")
-							.text(d)
+							.text(d3.format(".3f")(d))
 							.attr("class", "legendaMapa")
 							.attr("dominant-baseline", "hanging");
 					},
