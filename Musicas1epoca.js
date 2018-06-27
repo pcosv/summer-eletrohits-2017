@@ -67,10 +67,12 @@ d3.json("custom.geojson", (erro, jsonData)=>{
 				.key(d=>d.id)
 				.map(csvFeatures);
 			let averageFeats = generateMeans(countriesMusic, musicFeats);
+			console.log(averageFeats);
 			
 			mapa.colorScale().domain(d3.extent(averageFeats));
 			mapa.fillValue((d, i)=>d)
 				.fillFunction(d=>(d ? mapa.colorScheme()(mapa.colorScale()(mapa.fillValue()(d))) : "transparent"))
+				.colorScheme(d3.scaleLinear().domain([0, .5, 1]).range(["#fde0dd", "#fa9fb5", "#c51b8a"]))
 				.setData(averageFeats, null, {
 					mouseover: (d, i)=>{
 						mapa.selection().append("text")
