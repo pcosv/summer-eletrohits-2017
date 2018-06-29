@@ -19,9 +19,28 @@
 
 
 var x
+var c
 
-d3.csv("data.csv22", function(data){
- // x = data[0]
+d3.csv("data.csv", function(data){
+  x = data;
+
+  var entries
+
+  for(i = 0 ; i < x.length; i = i + 1000){
+console.log(22)
+  entries = d3.nest()
+    .key(function(d) { 
+      console.log(d.Date)
+      return d.Date; 
+    })
+    .key(function(d) { return d.Region; })
+    .entries(x);
+
+  }
+
+  console.log(entries)
+
+ 
 });
 
 
@@ -38,7 +57,6 @@ for(i = 0 ; i < countries.length; i++){
   temp.id = countries[i];
   temp.group = 1
 
-  console.log(temp)
   elements = elements.concat(temp);
 
 }
@@ -53,12 +71,10 @@ for(i = 0 ; i < countries.length; i++){
   temp.target = countries[0];
   temp.value = 1
 
-  console.log(temp)
   links = links.concat(temp);
 
 }
 
-console.log(links)
 
 //Code
 
