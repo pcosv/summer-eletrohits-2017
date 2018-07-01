@@ -35,7 +35,7 @@ function queryDate(nest, minDate, maxDate) {
 }
 
 // Gera as médias de cada país.
-function generateMeans(countriesMusic, musicFeats) {
+function generateMeans(countriesMusic, musicFeats, attribute) {
 	return countriesMusic.map(d=>{
 		if (d) {
 			let dateNest = d3.nest()
@@ -44,7 +44,7 @@ function generateMeans(countriesMusic, musicFeats) {
 			let queryResult = queryDate(dateNest, [2017, 1, 1], [2018, 1, 31]);
 			let musicStreams = queryResult.map(e=>Number(e.Streams));
 			let musicIds = queryResult.map(e=>e.URL.substring(31, e.URL.length - 1));
-			let avgValence = calculateMean(musicStreams, musicIds.map(e=>musicFeats["$" + e][0].valence));
+			let avgValence = calculateMean(musicStreams, musicIds.map(e=>musicFeats["$" + e][0][attribute]));
 			return avgValence;
 		}
 	});
@@ -58,7 +58,8 @@ var mapa = new Map(svgSelection, null, null, 2, null)
 	.projection(d3.geoNaturalEarth1());
 
 d3.json("custom.geojson", (erro, jsonData)=>{
-	mapa.setMap(jsonData, {id: (d, i)=>d.properties.name});
+	mapa.fillFunction((d, i)=>"#00000010")
+		.setMap(jsonData, {id: (d, i)=>d.properties.name});
 	let countriesList = jsonData.features.map(d=>d.properties.iso_a2.toLowerCase());
 	d3.csv("filteredData.csv", (erro, csvData)=>{
 		let countriesMusic = getCountriesMusics(countriesList, csvData);
@@ -66,22 +67,24 @@ d3.json("custom.geojson", (erro, jsonData)=>{
 			let musicFeats = d3.nest()
 				.key(d=>d.id)
 				.map(csvFeatures);
-			let averageFeats = generateMeans(countriesMusic, musicFeats);
-			console.log(averageFeats);
 			
-			mapa.colorScale().domain(d3.extent(averageFeats));
-			mapa.fillValue((d, i)=>d)
-				.fillFunction(d=>(d ? mapa.colorScheme()(mapa.colorScale()(mapa.fillValue()(d))) : "transparent"))
-				.colorScheme(d3.scaleLinear().domain([0, .5, 1]).range(["#fde0dd", "#fa9fb5", "#c51b8a"]))
-				.setData(averageFeats, null, {
-					mouseover: (d, i)=>{
-						mapa.selection().append("text")
-							.text(d ? d3.format(".3f")(d) : undefined)
-							.attr("class", "legendaMapa")
-							.attr("dominant-baseline", "hanging");
-					},
-					mouseout: (d, i)=>mapa.selection().selectAll(".legendaMapa").remove()
-				});
+			// Altera o mapa quando um novo atributo é selecionado
+			d3.selectAll("input").on("change", function() {
+				let averageFeats = generateMeans(countriesMusic, musicFeats, this.value);
+				mapa.colorScale().domain(d3.extent(averageFeats));
+				mapa.fillValue((d, i)=>d)
+					.fillFunction(d=>(d ? mapa.colorScheme()(mapa.colorScale()(mapa.fillValue()(d))) : "#00000010"))
+					.colorScheme(d3.scaleLinear().domain([0, .5, 1]).range(["#fde0dd", "#fa9fb5", "#c51b8a"]))
+					.setData(averageFeats, {stroke: d=>(d ? "black" : "transparent")}, {
+						mouseover: (d, i)=>{
+							mapa.selection().append("text")
+								.text(d ? (mapa.pathSelection().filter((_, j)=>(j==i)).attr("id") + " - " + d3.format(".3f")(d)) : undefined)
+								.attr("class", "legendaMapa")
+								.attr("dominant-baseline", "hanging");
+						},
+						mouseout: (d, i)=>mapa.selection().selectAll(".legendaMapa").remove()
+					});
+			});
 		});
 	});
 });
