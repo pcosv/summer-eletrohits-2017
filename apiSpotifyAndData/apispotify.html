@@ -6,11 +6,10 @@
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script type="text/javascript" src= "urls.json"></script>
 	<script type="text/javascript" src= "trackArtists.json"></script>
-	<script type="text/javascript" src= "trackArtistsById.json"></script>
 	<script type="text/javascript" src= "trackFeatures.json"></script>
 	<script type="text/javascript" src= "artistsGenres.json"></script>
 	<script type="text/javascript" src= "idsByCountry.json"></script>
-	<script type="text/javascript" src= "distinctArtists.json"></script>
+	<script type="text/javascript" src= "allGenres.json"></script>
 	<script type="text/javascript" >
 
 		var uri = '';
@@ -19,7 +18,7 @@
 		var respostaFeatures = new Array();
 		var respostaGenres = new Array();
 		var count = 0;
-		var token = 'BQCECc8Osbse4wX9SrOi0wbc4OFzSjmbbl1x3t4opisWXhOSyOjPcNdAbfWqGnKNJCWcHWuEyJGFoUDk8UUJtR3COAxAuXfYEZ5eEU1DZOdlhnmZPt93osUE-J8SH8DCPb5TRg4lFLWJADxeNWgqgUGYEtIRi1GPWNPT1_7VBscarSHSBTmSDHATZtvNT98NzylQE5xtHr4pohG31RcKuyCjgdVrQ-cUfM8RM73SBVxJZf52WP2fWRUSKgVSi9EofW0x0-od7Ba74GrUXQ';
+		var token = 'BQDCgkklsYtz4SwgBhRl24hwo9IkVc71uDQeoQCgaLjOk9LrlcCt_HjZzdmXgcADjcH6ltXALDTcX5QTmPv_J_9euy7C8FyW6xAM0dnSva5QV3h72_cbkfq2TRdpKXyEl_3kZ7Noydw02_92FbI4LchoNSwlxzPfHcLYmxgy_mRhLLuiNMRw7s5ivDJL4s1B8LtY-TzLSloHrN3eXvojCfaD2AS_HiZyAZoANanuAtLtcnPOxfe5_3bB9xjPJT4pDS5dU2BDgADiZVu41A';
 
 		function download(data, filename, type) {
 			var file = new Blob([data], {type: type});
@@ -106,31 +105,44 @@
 		}
 
 		// download(JSON.stringify(respostaFeatures, ["id", "energy", "loudness", "speechiness", "instrumentalness", "liveness", "valence", "danceability", "acousticness", "tempo"], "\t"), "trackFeatures.json", "text/plain");
-		genres=[];
+		respostaGenres="{";
 		function getGenres(){
+
+			songs = Object.keys(trackArtists);
+			distinctArtists = [];
+			for (var i = 0; i<songs.length; i++){
+			    distinctArtist = trackArtists[songs[i]];
+			    for(var j = 0;j<distinctArtists.length;j++){
+			        if (distinctArtists[j] == distinctArtist){
+			            distinctArtist = "";
+			        }
+			    }
+			    if(distinctArtist != ""){
+			        distinctArtists.push(distinctArtist);
+			    }
+			}
 
 			for(var i = 0; i < distinctArtists.length; i++){
 
 				if(uri){
-					uri += ','+distinctArtists[i]['id'];
+					uri += ','+distinctArtists[i];
 				} else {
-					uri += distinctArtists[i]['id'];
+					uri += distinctArtists[i];
 				}
 
 				if((i+1)%50 === 0 || i == distinctArtists.length-1){
 
-					setTimeout(function(uri) {
+					setTimeout(function(uris) {
 
 					$.ajax({
-						url: 'https://api.spotify.com/v1/artists?ids=' + uri ,
+						url: 'https://api.spotify.com/v1/artists?ids=' + uris ,
 						type: 'GET',
 						headers: {
 							'Authorization' : 'Bearer ' + token
 						}, success: function(data) {
 
-								console.log(data['artists']);
 								for (var j = 0; j < data["artists"].length; j++) {
-										genres.push([data["artists"][j]["id"], "/"+data["artists"][j]["genres"].join('/')+"/"]);
+										respostaGenres+="\""+data["artists"][j]["id"]+"\":\"/"+data["artists"][j]["genres"].join('/')+"/\",";
 								}
 							}
 						});
@@ -161,13 +173,10 @@
 			    }
 			}
 
-			var csv = 'id,artist_id,artist_name,genres,energy,instrumentalness,liveness,loudness,speechiness,valence,danceability,acousticness,tempo\n'
+			var csv = 'id,artist_id,genres,energy,instrumentalness,liveness,loudness,speechiness,valence,danceability,acousticness,tempo\n'
 			for(var i = 0; i<21697; i++){
 			    if(trackFeatures[i] != null){
-					if(typeof trackFeatures[i]["artist_name"] == "string"){
-			        	trackFeatures[i]["artist_name"]= trackFeatures[i]["artist_name"].replace(',','').replace(',','');
-					}
-					csv += trackFeatures[i]["id"]+','+trackFeatures[i]["artist_id"]+','+trackFeatures[i]["artist_name"]+','+trackFeatures[i]["genres"]+','+trackFeatures[i]["energy"]+','+trackFeatures[i]["instrumentalness"]+','+trackFeatures[i]["liveness"]+','+trackFeatures[i]["loudness"]+','+trackFeatures[i]["speechiness"]+','+trackFeatures[i]["valence"]+','+trackFeatures[i]["danceability"]+','+trackFeatures[i]["acousticness"]+','+trackFeatures[i]["tempo"]+'\n';
+					csv += trackFeatures[i]["id"]+','+trackFeatures[i]["artist_id"]+','+trackFeatures[i]["genres"]+','+trackFeatures[i]["energy"]+','+trackFeatures[i]["instrumentalness"]+','+trackFeatures[i]["liveness"]+','+trackFeatures[i]["loudness"]+','+trackFeatures[i]["speechiness"]+','+trackFeatures[i]["valence"]+','+trackFeatures[i]["danceability"]+','+trackFeatures[i]["acousticness"]+','+trackFeatures[i]["tempo"]+'\n';
 				}
 			}
 			download(csv, "extractedFeatures.csv", "text/plain");

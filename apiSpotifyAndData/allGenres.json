@@ -802,3 +802,41 @@ allGenres =
 	"classical trumpet",
 	"new orleans jazz"
 ];
+
+subGenres = 
+{
+	"latin" : {"subgenres" : ["latin", "mariachi", "soca", "cubaton", "andean", "funk carioca", "cumbia", "reggaeton", "merengue", "cuarteto", "forro", "grupera", "banda", "musica para ninos", "pagode", "bailando", "villancico", "vallenato"], "count" : 618},
+	"pop" : {"subgenres" : ["boyband", "disney", "levenslied", "hollywood", "eurovision", "laiko", "pop", "russelater", "francoton", "schlager", "halloween", "christmas"], "count" : 3058},
+	"country" : {"subgenres" : ["country", "bluegrass", "sertanejo"], "count" : 57},
+	"hip hop" : {"subgenres" : ["hip hop", "rap", "grime", "trap", "k-hop"], "count" : 655},
+	"folk" : {"subgenres" : ["folk", "mellow gold", "americana", "entehno"], "count" : 79},
+	"classical" : {"subgenres" : ["bolero", "broadway", "classical", "movie", "orchestra", "soundtrack", "monastic", "choral", "choir", "azeri traditional", "nasyid", "musiikkia lapsille", "gospel", "ball", "capella"], "count" : 22},
+	"metal" : {"subgenres" : ["metal"], "count" : 34},
+	"punk" : {"subgenres" : ["punk"], "count" : 23},
+	"rock" : {"subgenres" : ["rock", "neo-singer-songwriter", "neo mellow", "opm", "denpa-kei", "indonesian indie", "polish indie", "tico", "taiwan indie", "otacore", "indie", "c86"], "count" : 324} ,
+	"jazz" : {"subgenres" : ["jazz", "bossa nova"], "count" : 24},
+	"blues" : {"subgenres" : ["mpb", "blues", "barnmusik"], "count" : 5},
+	"r&b" : {"subgenres" : ["r&b", "soul", "funk"], "count" : 48},
+	"edm" : {"subgenres" : ["edm", "trance", "new jack swing", "jumpstyle", "chillwave", "garage", "vapor", "aussitronica", "sky room", "disco", "electronic", "electronica", "electro", "house", "dubstep", "dance", "bounce", "lo-fi"], "count" : 196},
+	"reggae" : {"subgenres" : ["reggae"], "count" : 7},
+	"others" : {"subgenres":[], "count": 61}
+};
+
+genres = 
+[
+	"latin",
+	"pop",
+	"country",
+	"hip hop",
+	"folk",
+	"classical",
+	"metal",
+	"punk",
+	"rock",
+	"jazz",
+	"blues",
+	"r&b",
+	"edm",
+	"reggae",
+	"others"
+];
