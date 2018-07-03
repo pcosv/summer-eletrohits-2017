@@ -53,16 +53,16 @@ var colorrange = [];
 function chart(csvpath, color) {
 
 if (color == "pink") {
-  colorrange = ["#8dd3c7", "#ffffb3", "#bebada", "#fb8072", "#80b1d3", "#fdb462", "#b3de69", "#fccde5", "#1f78b4", "#33a02c", "#ffff33", "#fddaec", "#b3cde3", "#fed9a6", "#d9d9d9"];
+  colorrange = ["#8dd3c7", "#ffffb3", "#bebada", "#fb8072", "#80b1d3", "#fdb462", "#b3de69", "#fccde5", "#1f78b4", "#33a02c", "#ffff33", "#fb9a99", "#a6cee3", "#984ea3", "#d9d9d9"];
 }
 
-strokecolor = colorrange[0];
+strokecolor = "#000000";
 
 var format = d3.time.format("%m/%d/%y");
 
-var margin = {top: 20, right: 40, bottom: 30, left: 30};
+var margin = {top: 20, right: 50, bottom: 30, left: 50};
 var width = document.body.clientWidth - margin.left - margin.right;
-var height = 400 - margin.top - margin.bottom;
+var height = 500 - margin.top - margin.bottom;
 
 var tooltip = d3.select("body")
     .append("div")
@@ -71,7 +71,7 @@ var tooltip = d3.select("body")
     .style("z-index", "20")
     .style("visibility", "hidden")
     .style("top", "30px")
-    .style("left", "55px");
+    .style("left", "65px");
 
 // DEVE HAVER UM FILTRO POR PAÍS
 
@@ -185,7 +185,7 @@ var graph = d3.csv(csvpath, function(data) {
       d3.select(this)
       .classed("hover", true)
       .attr("stroke", strokecolor)
-      .attr("stroke-width", "0.5px"),
+      .attr("stroke-width", "1px"),
       tooltip.html( "<p>" + d.key + "<br>" + pro + "</p>" ).style("visibility", "visible");
 
     })
