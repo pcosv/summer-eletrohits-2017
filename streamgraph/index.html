@@ -48,11 +48,13 @@ chart("data.csv", "pink");
 var datearray = [];
 var colorrange = [];
 
-// Gêneros: pop, rock, latin, hip hop, dance, edm (house ou trance), folk, country, 
+// Gêneros: pop, rock, latin, hip hop, dance, edm (house ou trance), folk, country,
 
 function chart(csvpath, color) {
 
-colorrange = ["#fbb4ae", "#b3cde3", "#ccebc5", "#decbe4", "#fed9a6", "#F1EEF6"];
+if (color == "pink") {
+  colorrange = ["#8dd3c7", "#ffffb3", "#bebada", "#fb8072", "#80b1d3", "#fdb462", "#b3de69", "#fccde5", "#1f78b4", "#33a02c", "#ffff33", "#fddaec", "#b3cde3", "#fed9a6", "#d9d9d9"];
+}
 
 strokecolor = colorrange[0];
 
