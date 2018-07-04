@@ -41,7 +41,7 @@
 
 		function getGenreCount(){
 
-		    for(var i = 0; j<genres.length; j++){
+		    for(var i = 0; i<genres.length; i++){
 				subGenres[genres[i]]["count"] = 0;
 		    }
 
@@ -208,6 +208,69 @@
 				}
 			}
 			download(csv, "extractedFeatures.csv", "text/plain");
+		}
+
+		var data = [];
+		d3.csv('data.csv', (error, csv)=>{
+			data = csv;
+		});
+
+		csvDownload = 'country,key,value,date';
+		csvGenres = {};
+		function countGenresStreamsByRegion(){
+
+			tempRegion = data[0]["Region"];
+			tempDate = new Date(data[0]["Date"]);
+			tempDateAsString = data[0]["Date"];
+			for(var h =0; h<data.length; h++){
+				timeLengthInDays = (new Date(data[h]["Date"]) - tempDate)/1000/60/60/24;
+				if(timeLengthInDays == 7 || data[h]["Region"] != tempRegion){
+					for(var i = 0; i<genres.length; i++){
+						if(!csvGenres[tempRegion]){
+							csvGenres[tempRegion] = new Array();
+						}
+						if(!csvGenres[tempRegion][genres[i]]){
+							csvGenres[tempRegion][genres[i]] = "";
+						}
+						csvGenres[tempRegion][genres[i]]+="\n"+tempRegion+","+genres[i]+","+subGenres[genres[i]]["count"]+","+tempDateAsString;
+						subGenres[genres[i]]["count"] = 0;
+					}
+					tempRegion = data[h]["Region"];
+					tempDate = new Date(data[h]["Date"]);
+					tempDateAsString = data[h]["Date"];
+					
+				}
+
+				genre = artistsGenres[trackArtists[data[h]['URL'].substring(31, 53)]];
+			    notPresent = true;
+				if(genre){
+				    for(var j = 0; j<genres.length; j++){
+						subGenre = subGenres[genres[j]]["subgenres"];
+						for(var k =0;k<subGenre.length; k++){
+			   		     	if(genre.indexOf(subGenre[k]) != -1){
+			  	        	  	notPresent = false;
+								subGenres[genres[j]]["count"] = parseInt(subGenres[genres[j]]["count"])+parseInt(data[h]['Streams']);
+								break;
+			        		}
+			     	   }
+						if(!notPresent){
+			     	  	 	break;
+						}
+					}
+			    }
+			    if(notPresent && genre!="//"){
+			        subGenres['others']["count"] = parseInt(subGenres['others']["count"])+parseInt(data[h]['Streams']);
+			    }
+				
+			}
+			regions = Object.keys(csvGenres);
+			for (var i = 0; i < regions.length; i++) {
+				for (var j = 0; j < genres.length; j++) {
+					csvDownload+=csvGenres[regions[i]][genres[j]];
+				}
+			}
+
+			download(csvDownload, "paula.csv", "text/plain");
 		}
 
 	</script>
