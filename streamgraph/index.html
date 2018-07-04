@@ -41,28 +41,25 @@ button {
 // key -> estilo musical
 // value -> streams do estilo na respectiva semana do ano
 // date -> semana do ano
-countries = ["ec", "fr", "ar", "fi", "no", "it", "lt", "ph", "tw", "nz", "ee", "tr", "us", "sv", "cr", "de", "cl", "jp", "br", "hn", "gt", "ch", "hu", "ca", "pe", "be", "my", "dk", "bo", "pl", "at", "pt", "se", "mx", "pa", "uy", "is", "es", "cz", "ie", "nl", "sk", "co", "sg", "id", "do", "gb", "py", "au", "lv", "gr", "hk"];
 
 chart("data.csv", "pink");
 
 var datearray = [];
 var colorrange = [];
 
-// Gêneros: pop, rock, latin, hip hop, dance, edm (house ou trance), folk, country,
-
 function chart(csvpath, color) {
 
 if (color == "pink") {
-  colorrange = ["#8dd3c7", "#ffffb3", "#bebada", "#fb8072", "#80b1d3", "#fdb462", "#b3de69", "#fccde5", "#1f78b4", "#33a02c", "#ffff33", "#fddaec", "#b3cde3", "#fed9a6", "#d9d9d9"];
+  colorrange = ["#8dd3c7", "#ffffb3", "#bebada", "#fb8072", "#80b1d3", "#fdb462", "#b3de69", "#fccde5", "#1f78b4", "#33a02c", "#ffff33", "#fb9a99", "#a6cee3", "#984ea3", "#d9d9d9"];
 }
 
-strokecolor = colorrange[0];
+strokecolor = "#000000";
 
 var format = d3.time.format("%m/%d/%y");
 
-var margin = {top: 20, right: 40, bottom: 30, left: 30};
+var margin = {top: 20, right: 50, bottom: 30, left: 50};
 var width = document.body.clientWidth - margin.left - margin.right;
-var height = 400 - margin.top - margin.bottom;
+var height = 500 - margin.top - margin.bottom;
 
 var tooltip = d3.select("body")
     .append("div")
@@ -71,9 +68,7 @@ var tooltip = d3.select("body")
     .style("z-index", "20")
     .style("visibility", "hidden")
     .style("top", "30px")
-    .style("left", "55px");
-
-// DEVE HAVER UM FILTRO POR PAÍS
+    .style("left", "65px");
 
 // datas do ano de 2017
 var x = d3.time.scale()
@@ -185,7 +180,7 @@ var graph = d3.csv(csvpath, function(data) {
       d3.select(this)
       .classed("hover", true)
       .attr("stroke", strokecolor)
-      .attr("stroke-width", "0.5px"),
+      .attr("stroke-width", "1px"),
       tooltip.html( "<p>" + d.key + "<br>" + pro + "</p>" ).style("visibility", "visible");
 
     })
@@ -204,8 +199,8 @@ var graph = d3.csv(csvpath, function(data) {
         .attr("class", "remove")
         .style("position", "absolute")
         .style("z-index", "19")
-        .style("width", "1px")
-        .style("height", "380px")
+        .style("width", "2px")
+        .style("height", "470px")
         .style("top", "10px")
         .style("bottom", "30px")
         .style("left", "0px")
