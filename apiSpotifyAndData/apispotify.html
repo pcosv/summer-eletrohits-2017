@@ -212,15 +212,35 @@
 
 		var data = [];
 		d3.csv('data.csv', (error, csv)=>{
-			console.log(csv);
 			data = csv;
 		});
 
-		csvDownload = 'country,key,value,date\n';
+		csvDownload = 'country,key,value,date';
 		csvGenres = {};
-		counter = 0;
-		function countGenresStreamsByCountry(){
+		function countGenresStreamsByRegion(){
+
+			tempRegion = data[0]["Region"];
+			tempDate = new Date(data[0]["Date"]);
+			tempDateAsString = data[0]["Date"];
 			for(var h =0; h<data.length; h++){
+				timeLengthInDays = (new Date(data[h]["Date"]) - tempDate)/1000/60/60/24;
+				if(timeLengthInDays == 7 || data[h]["Region"] != tempRegion){
+					for(var i = 0; i<genres.length; i++){
+						if(!csvGenres[tempRegion]){
+							csvGenres[tempRegion] = new Array();
+						}
+						if(!csvGenres[tempRegion][genres[i]]){
+							csvGenres[tempRegion][genres[i]] = "";
+						}
+						csvGenres[tempRegion][genres[i]]+="\n"+tempRegion+","+genres[i]+","+subGenres[genres[i]]["count"]+","+tempDateAsString;
+						subGenres[genres[i]]["count"] = 0;
+					}
+					tempRegion = data[h]["Region"];
+					tempDate = new Date(data[h]["Date"]);
+					tempDateAsString = data[h]["Date"];
+					
+				}
+
 				genre = artistsGenres[trackArtists[data[h]['URL'].substring(31, 53)]];
 			    notPresent = true;
 				if(genre){
@@ -241,17 +261,16 @@
 			    if(notPresent && genre!="//"){
 			        subGenres['others']["count"] = parseInt(subGenres['others']["count"])+parseInt(data[h]['Streams']);
 			    }
-				if((h+1)%7 === 0 || h == data.length-1){
-					for(var i = 0; i<genres.length; i++){
-						counter++;
-						if(!csvGenres[genres[i]]){
-							csvGenres[genres[i]] = "";
-						}
-						csvGenres[genres[i]]+="ec,"+genres[i]+","+subGenres[genres[i]]["count"]+","+data[h]['Date']+"\n";
-						subGenres[genres[i]]["count"] = 0;
-					}
+				
+			}
+			regions = Object.keys(csvGenres);
+			for (var i = 0; i < regions.length; i++) {
+				for (var j = 0; j < genres.length; j++) {
+					csvDownload+=csvGenres[regions[i]][genres[j]];
 				}
 			}
+
+			download(csvDownload, "paula.csv", "text/plain");
 		}
 
 	</script>
