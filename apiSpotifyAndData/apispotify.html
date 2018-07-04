@@ -41,7 +41,7 @@
 
 		function getGenreCount(){
 
-		    for(var i = 0; j<genres.length; j++){
+		    for(var i = 0; i<genres.length; i++){
 				subGenres[genres[i]]["count"] = 0;
 		    }
 
@@ -208,6 +208,50 @@
 				}
 			}
 			download(csv, "extractedFeatures.csv", "text/plain");
+		}
+
+		var data = [];
+		d3.csv('data.csv', (error, csv)=>{
+			console.log(csv);
+			data = csv;
+		});
+
+		csvDownload = 'country,key,value,date\n';
+		csvGenres = {};
+		counter = 0;
+		function countGenresStreamsByCountry(){
+			for(var h =0; h<data.length; h++){
+				genre = artistsGenres[trackArtists[data[h]['URL'].substring(31, 53)]];
+			    notPresent = true;
+				if(genre){
+				    for(var j = 0; j<genres.length; j++){
+						subGenre = subGenres[genres[j]]["subgenres"];
+						for(var k =0;k<subGenre.length; k++){
+			   		     	if(genre.indexOf(subGenre[k]) != -1){
+			  	        	  	notPresent = false;
+								subGenres[genres[j]]["count"] = parseInt(subGenres[genres[j]]["count"])+parseInt(data[h]['Streams']);
+								break;
+			        		}
+			     	   }
+						if(!notPresent){
+			     	  	 	break;
+						}
+					}
+			    }
+			    if(notPresent && genre!="//"){
+			        subGenres['others']["count"] = parseInt(subGenres['others']["count"])+parseInt(data[h]['Streams']);
+			    }
+				if((h+1)%7 === 0 || h == data.length-1){
+					for(var i = 0; i<genres.length; i++){
+						counter++;
+						if(!csvGenres[genres[i]]){
+							csvGenres[genres[i]] = "";
+						}
+						csvGenres[genres[i]]+="ec,"+genres[i]+","+subGenres[genres[i]]["count"]+","+data[h]['Date']+"\n";
+						subGenres[genres[i]]["count"] = 0;
+					}
+				}
+			}
 		}
 
 	</script>
