@@ -41,14 +41,11 @@ button {
 // key -> estilo musical
 // value -> streams do estilo na respectiva semana do ano
 // date -> semana do ano
-countries = ["ec", "fr", "ar", "fi", "no", "it", "lt", "ph", "tw", "nz", "ee", "tr", "us", "sv", "cr", "de", "cl", "jp", "br", "hn", "gt", "ch", "hu", "ca", "pe", "be", "my", "dk", "bo", "pl", "at", "pt", "se", "mx", "pa", "uy", "is", "es", "cz", "ie", "nl", "sk", "co", "sg", "id", "do", "gb", "py", "au", "lv", "gr", "hk"];
 
 chart("data.csv", "pink");
 
 var datearray = [];
 var colorrange = [];
-
-// Gêneros: pop, rock, latin, hip hop, dance, edm (house ou trance), folk, country,
 
 function chart(csvpath, color) {
 
@@ -72,8 +69,6 @@ var tooltip = d3.select("body")
     .style("visibility", "hidden")
     .style("top", "30px")
     .style("left", "65px");
-
-// DEVE HAVER UM FILTRO POR PAÍS
 
 // datas do ano de 2017
 var x = d3.time.scale()
@@ -204,8 +199,8 @@ var graph = d3.csv(csvpath, function(data) {
         .attr("class", "remove")
         .style("position", "absolute")
         .style("z-index", "19")
-        .style("width", "1px")
-        .style("height", "380px")
+        .style("width", "2px")
+        .style("height", "470px")
         .style("top", "10px")
         .style("bottom", "30px")
         .style("left", "0px")
