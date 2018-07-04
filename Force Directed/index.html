@@ -18,57 +18,71 @@
 <script>
 
 
-var x
-var c
+var dataMusic
 
-d3.csv("data.csv", function(data){
-  x = data;
+d3.csv("data.csv", function(csv){
 
-  var entries
+dataFilter = d3.nest()
+  .key(function(d) { return d.Region; })
+  .key(function(d) { 
+    return d.Date.substring(0, 7); 
+  })
+  .key(function(d) { return d["URL"]; })
+  .entries(csv);
 
-  for(i = 0 ; i < x.length; i = i + 1000){
-console.log(22)
-  entries = d3.nest()
-    .key(function(d) { 
-      console.log(d.Date)
-      return d.Date; 
-    })
-    .key(function(d) { return d.Region; })
-    .entries(x);
+  topMusic()
+
+  function topMusic(){
+
+    dataMusic = []
+
+    for (var i = 0; i < dataFilter.length; i++) {
+      dataMusic[dataFilter[i].key] = []
+      for (var v = 0; v < dataFilter[i].values.length; v++) {
+
+        var x = dataFilter[i].values[v].values
+      
+        var result = x.map(d=> 
+          { var total = d3.sum(d.values.map(d=>d.Streams)) 
+            return [d.key, total]
+          }
+         )
+        var sortResult = result.sort(function (a, b) {
+          return b[1]-a[1]
+        })
+
+        var resultTop = sortResult.slice(0,200)
+        resultTop = resultTop.map(d=>d[0])
+
+        dataMusic[i][v] = resultTop
+        //dataMusic[dataFilter[i].key][dataFilter[i].values[v].key] = resultTop
+
+      }
+    }
+
+    console.log(dataMusic)
 
   }
 
-  console.log(entries)
-
- 
-});
-
-
-countries = ["ec", "fr", "ar", "fi","no", "it", "lt", "ph", "tw", "nz", /*"ee", "tr", "us", "sv", "cr", "de", "cl", "jp", "br", "hn", "gt", "ch", "hu", "ca", "pe", "be", "my", "dk", "bo", "pl", "at", "pt", "se", "mx", "pa", "uy", "is", "es", "cz", "ie", "nl", "sk", "co", "sg", "id", "do", "gb", "py", "au", "lv", "gr", "hk"*/];
-
+countries = ["ec", "fr", "ar", "fi","no", "it", "lt", "ph", "tw", "nz", "ee", "tr", "us", "sv", "cr", "de", "cl", "jp", "br", "hn", "gt", "ch", "hu", "ca", "pe", "be", "my", "dk", "bo", "pl", "at", "pt", "se", "mx", "pa", "uy", "is", "es", "cz", "ie", "nl", "sk", "co", "sg", "id", "do", "gb", "py", "au", "lv", "gr", "hk"];
 
 var elements = [];
-var i
-
-for(i = 0 ; i < countries.length; i++){
-
+for(var i = 0 ; i < countries.length; i++){
   var temp = {};
-
   temp.id = countries[i];
   temp.group = 1
 
   elements = elements.concat(temp);
-
 }
 
 var links = [];
 
-for(i = 0 ; i < countries.length; i++){
+for(i = 0 ; i < dataMusic.length; i++){
 
   var temp = {};
 
-  temp.source = countries[i];
-  temp.target = countries[0];
+  temp.source = dataMusic[i];
+  temp.target = dataMusic[0];
   temp.value = 1
 
   links = links.concat(temp);
@@ -148,6 +162,20 @@ function dragended(d) {
   if (!d3.event.active) simulation.alphaTarget(0);
   d.fx = null;
   d.fy = null;
+}
+
+});
+
+function linkCountries (arrC1, arrC2){
+  var value = 0
+  for (var i = 0; i < arrC1.length; i++) {
+    for (var v = 0; v < arrC2.length; v++) {
+      if (arrC1[i] == arrC2[v]){
+        value = value + 1
+      }
+    }
+  }
+  return value
 }
 
 </script>
