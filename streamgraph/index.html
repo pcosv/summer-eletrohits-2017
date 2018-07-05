@@ -42,7 +42,8 @@ button {
 // value -> streams do estilo na respectiva semana do ano
 // date -> semana do ano
 
-chart("data.csv", "pink");
+chart("paula.csv", "pink");
+console.log();
 
 var datearray = [];
 var colorrange = [];
@@ -57,7 +58,7 @@ strokecolor = "#000000";
 
 var format = d3.time.format("%m/%d/%y");
 
-var margin = {top: 20, right: 50, bottom: 30, left: 50};
+var margin = {top: 20, right: 70, bottom: 30, left: 70};
 var width = document.body.clientWidth - margin.left - margin.right;
 var height = 500 - margin.top - margin.bottom;
 
@@ -68,7 +69,7 @@ var tooltip = d3.select("body")
     .style("z-index", "20")
     .style("visibility", "hidden")
     .style("top", "30px")
-    .style("left", "65px");
+    .style("left", "90px");
 
 // datas do ano de 2017
 var x = d3.time.scale()
@@ -86,7 +87,7 @@ var z = d3.scale.ordinal()
 var xAxis = d3.svg.axis()
     .scale(x)
     .orient("bottom")
-    .ticks(d3.time.weeks);
+    .ticks(d3.time.months);
 
 // eixo y
 var yAxis = d3.svg.axis()
@@ -96,7 +97,7 @@ var stack = d3.layout.stack()
     .offset("silhouette")
     .values(function(d) { return d.values; })
     .x(function(d) { return d.date; })
-    .y(function(d) { return d.value; });
+    .y(function(d) { return Math.sqrt(d.value); });
 
 // agrupando pelo estilo musical
 var nest = d3.nest()
@@ -117,24 +118,52 @@ var svg = d3.select(".chart").append("svg")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 var graph = d3.csv(csvpath, function(data) {
+  console.log(data)
   data.forEach(function(d) {
-    d.date = format.parse(d.date);
-    d.value = +d.value;
+    if (d.country == "ec"){
+      
+      d.date = format.parse(d.date);
+      d.value = +Math.sqrt(d.value);
+    };
   });
 
   var layers = stack(nest.entries(data));
 
 // setando domínios dos eixos
+
   x.domain(d3.extent(data, function(d) { return d.date; }));
+
   y.domain([0, d3.max(data, function(d) { return d.y0 + d.y; })]);
+
 
 // faz um caminho e preenche com a cor correspondente ao estilo musical
   svg.selectAll(".layer")
       .data(layers)
     .enter().append("path")
       .attr("class", "layer")
-      .attr("d", function(d) { return area(d.values); })
+      .attr("d", function(d, index) {
+        genre = Object.keys(d)[0];
+        valuesReturned = {};
+        valuesReturned.key = d.key;
+        valuesReturned.values = [];
+        for (var i = 0; i < d.values.length; i++) {
+          if(d.values[i].country == "ec"){
+            valuesReturned.values[i] = {};
+            valuesReturned.values[i].key = d.values[i].key;
+            valuesReturned.values[i].date = d.values[i].date;
+            valuesReturned.values[i].value = d.values[i].value;
+            valuesReturned.values[i].y = d.values[i].y;
+            valuesReturned.values[i].y0 = d.values[i].y0;
+          }
+        }
+        console.log(valuesReturned);
+        return area(valuesReturned.values);
+
+      })
       .style("fill", function(d, i) { return z(i); });
+
+
+
 
 // eixo x
   svg.append("g")
@@ -174,7 +203,7 @@ var graph = d3.csv(csvpath, function(data) {
       }
 
       mousedate = datearray.indexOf(invertedx);
-      pro = d.values[mousedate].value;
+      pro = Math.round((d.values[mousedate].value)*(d.values[mousedate].value));
 
 // tooltip
       d3.select(this)
