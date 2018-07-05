@@ -21,17 +21,10 @@ function calculateMean(weights, values) {
 // Busca em um array nested todos os valores mapeados por uma data dentro de um determinado intervalo.
 function queryDate(nest, minDate, maxDate) {
 	let output = []
-	for (date in nest) {
-		let splittedDate = date.split("-");
-		splittedDate[0] = splittedDate[0].substring(1);
-		splittedDate = splittedDate.map(Number);
-		
-		if (splittedDate.length == 3) {
-			let formattedDate = new Date(splittedDate[0], splittedDate[1] - 1, splittedDate[2]);
-			if ((minDate <= formattedDate) && (formattedDate <= maxDate)) {
-				output.push(nest[date]);
-			}
-		}
+	let formatter = d3.format("02");
+	for (let currDate = new Date(minDate); currDate <= maxDate; currDate.setDate(currDate.getDate() + 1)) {
+		let currDateString = "$" + currDate.getFullYear() + "-" + formatter(currDate.getMonth() + 1) + "-" + formatter(currDate.getDate());
+		if (nest[currDateString]) output.push(nest[currDateString]);
 	}
 	return d3.merge(output);
 }
@@ -52,7 +45,7 @@ function generateMeans(countriesMusic, musicFeats, attribute, period) {
 
 //Atualiza o mapa
 function updateMap() {
-	let averageFeats = generateMeans(countriesMusic, musicFeats, shownAttribute, timeRange);
+	let averageFeats = generateMeans(countriesMusic, musicFeats, shownAttribute, shownTimeRange);
 	mapa.colorScale().domain(minMax[shownAttribute]);
 	mapa.fillValue((d, i)=>d)
 		.fillFunction(d=>(d ? mapa.colorScheme()(mapa.colorScale()(mapa.fillValue()(d))) : "#00000010"))
@@ -76,7 +69,7 @@ var mapSelection = d3.select("body").append("svg")
 	.attr("width", timeAxisSVG.attr("width"))
 	.attr("height", 530);
 
-var timeRange;
+var shownTimeRange;
 
 var mapa = new Map(mapSelection, null, null, 2, null)
 	.projection(d3.geoNaturalEarth1())
@@ -119,13 +112,8 @@ var timeAxisScale = d3.scaleTime()
 
 timeAxisSVG.call(d3.axisBottom(timeAxisScale));
 timeAxisSVG.call(
-	d3.brushX()
-		/*.on("brush", function() {
-			timeRange = (d3.event.selection) ? d3.event.selection.map(d=>timeAxisScale.invert(d)) : null;
-			if (shownAttribute) updateMap();
-		})*/
-		.on("end", function() {
-			timeRange = (d3.event.selection) ? d3.event.selection.map(d=>timeAxisScale.invert(d)) : null;
+	d3.brushX().on("end", function() {
+			shownTimeRange = (d3.event.selection) ? d3.event.selection.map(d=>timeAxisScale.invert(d)) : null;
 			if (shownAttribute) updateMap();
 		})
 );
