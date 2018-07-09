@@ -1,12 +1,25 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>Mapa Músicas</title>
+		<title>Summer Eletrohits 2017</title>
 		<script src="https://d3js.org/d3.v4.min.js"></script>
 		<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 		<script src="http://www.cin.ufpe.br/~avsc/Arquivos/Outros/Chart-Library/Chart-Library.min.js"></script>
 	</head>
 	<body>
+		<p><b>Selecione o atributo a ser visualizado: </b>
+			<input type="radio" id="danceability" name="visualizacao" value="danceability">Danceability</input>
+			<input type="radio" id="energy" name="visualizacao" value="energy">Energy</input>
+			<input type="radio" id="loudness" name="visualizacao" value="loudness">Loudness</input>
+			<input type="radio" id="speechiness" name="visualizacao" value="speechiness">Speechiness</input>
+			<input type="radio" id="acousticness" name="visualizacao" value="acousticness">Acousticness</input>
+			<input type="radio" id="instrumentalness" name="visualizacao" value="instrumentalness">Instrumentalness</input>
+			<input type="radio" id="liveness" name="visualizacao" value="liveness">Liveness</input>
+			<input type="radio" id="valence" name="visualizacao" value="valence">Valence</input>
+			<input type="radio" id="tempo" name="visualizacao" value="tempo">Tempo</input>
+		</p>
+		<svg id="timeAxis" width="1200" height="30">
+		</svg>
 		<script src="index.js"></script>
 	</body>
 </html>

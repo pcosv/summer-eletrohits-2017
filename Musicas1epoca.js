@@ -4,61 +4,44 @@
 function getCountriesMusics(countriesList, data) {
 	let rankNest = d3.nest()
 		.key(d=>d.Region)
+		.key(d=>d.Date)
 		.map(data);
 	return countriesList.map(d=>rankNest["$" + d]);
 }
 
 // Calcula a média ponderada de um atributo.
 function calculateMean(weights, values) {
-	let sum = 0;
-	for (i = 0; i < values.length; i++) {
-		sum += weights[i]*values[i];
-	}
-	return sum / d3.sum(weights);
+	return values.reduce((output, cur, i)=>(output + cur * weights[i]), 0) / d3.sum(weights);
 }
 
 // Busca em um array nested todos os valores mapeados por uma data dentro de um determinado intervalo.
 function queryDate(nest, minDate, maxDate) {
 	let output = []
-	for (date in nest) {
-		let splittedDate = date.split("-");
-		splittedDate[0] = splittedDate[0].substring(1);
-		splittedDate = splittedDate.map(Number);
-		
-		if (splittedDate.length == 3) {
-			let formattedDate = new Date(splittedDate[0], splittedDate[1] - 1, splittedDate[2]);
-			if ((minDate <= formattedDate) && (formattedDate <= maxDate)) {
-				output.push(nest[date]);
-			}
-		}
+	let formatter = d3.format("02");
+	for (let currDate = new Date(minDate); currDate <= maxDate; currDate.setHours(24)) {
+		let currDateString = "$" + currDate.getFullYear() + "-" + formatter(currDate.getMonth() + 1) + "-" + formatter(currDate.getDate());
+		if (nest[currDateString]) output.push(nest[currDateString]);
 	}
 	return d3.merge(output);
 }
 
 // Gera as médias de cada país.
 function generateMeans(countriesMusic, musicFeats, attribute, period) {
-	period = period ? period : [new Date(2017, 0, 1), new Date(2017, 0, 7)];
+	period = period ? period : [new Date(2017, 0, 1), new Date(2018, 0, 9)];
 	return countriesMusic.map(d=>{
 		if (d) {
-			let dateNest = d3.nest()
-				.key(d=>d.Date)
-				.map(d);
-			let queryResult = queryDate(dateNest, period[0], period[1]);
-			let musicStreams = queryResult.map(e=>Number(e.Streams));
-			let musicIds = queryResult.map(e=>e.URL.substring(31, e.URL.length - 1));
-			let avgValence = calculateMean(musicStreams, musicIds.map(e=>musicFeats["$" + e][0][attribute]));
-			return avgValence;
+			let queryResult = queryDate(d, period[0], period[1]);
+			return queryResult.reduce((output, cur, i)=>(output + cur.Streams * musicFeats[cur.URL][attribute]), 0)
+					/ queryResult.reduce((output, cur)=>(output + cur.Streams), 0);
 		}
 	});
 }
 
 //Atualiza o mapa
 function updateMap() {
-	let averageFeats = generateMeans(countriesMusic, musicFeats, shownAttribute, timeRange);
+	let averageFeats = generateMeans(countriesMusic, musicFeats, shownAttribute, shownTimeRange);
 	mapa.colorScale().domain(minMax[shownAttribute]);
-	mapa.fillValue((d, i)=>d)
-		.fillFunction(d=>(d ? mapa.colorScheme()(mapa.colorScale()(mapa.fillValue()(d))) : "#00000010"))
-		.colorScheme(d3.scaleLinear().domain([0, .5, 1]).range(["#fde0dd", "#fa9fb5", "#c51b8a"]))
+	mapa.fillFunction(d=>(d ? mapa.colorScheme()(mapa.colorScale()(mapa.fillValue()(d))) : "#00000010"))
 		.setData(averageFeats, {stroke: d=>(d ? "black" : "transparent")}, {
 			mouseover: (d, i)=>{
 				mapa.selection().append("text")
@@ -74,13 +57,17 @@ function updateMap() {
 
 var timeAxisSVG = d3.select("#timeAxis");
 
-var svgSelection = d3.select("body").append("svg")
+var mapSelection = d3.select("body").append("svg")
 	.attr("width", timeAxisSVG.attr("width"))
 	.attr("height", 530);
 
-var timeRange;
+var shownTimeRange;
 
-var mapa;
+var mapa = new Map(mapSelection, null, null, 2, null)
+	.projection(d3.geoNaturalEarth1())
+	.fillFunction((d, i)=>"#00000010")
+	.fillValue((d, i)=>d)
+	.colorScheme(d3.scaleLinear().domain([0, .5, 1]).range(["#fde0dd", "#fa9fb5", "#c51b8a"]));
 
 var shownAttribute;
 var countriesMusic;
@@ -90,17 +77,20 @@ var minMax;
 //--------------- CÓDIGO ---------------
 
 d3.json("custom.geojson", (erro, jsonData)=>{
-	mapa = new Map(svgSelection, null, null, 2, null)
-		.projection(d3.geoNaturalEarth1())
-		.fillFunction((d, i)=>"#00000010")
-		.setMap(jsonData, {id: (d, i)=>d.properties.name});
+	console.log(jsonData);
+	mapa.setMap(jsonData, {id: (d, i)=>d.properties.name});
 	let countriesList = jsonData.features.map(d=>d.properties.iso_a2.toLowerCase());
 	d3.csv("filteredData.csv", (erro, csvData)=>{
+		csvData.map(d=>{
+			d.Streams = Number(d.Streams);
+			d.URL = d.URL.substring(31, d.URL.length - 1);
+		});//Formatação do número de streams e da URL
 		countriesMusic = getCountriesMusics(countriesList, csvData);
+		console.log(countriesMusic);
 		d3.csv("featuresdf.csv", (erro, csvFeatures)=>{
-			musicFeats = d3.nest()
-				.key(d=>d.id)
-				.map(csvFeatures);
+			musicFeats = [];
+			csvFeatures.map(d => musicFeats[d.id] = d);
+			
 			minMax = [];
 			["danceability", "energy", "loudness", "speechiness", "acousticness", "instrumentalness", "liveness", "valence", "tempo"]
 				.map(d=>(minMax[d] = d3.extent(generateMeans(countriesMusic, musicFeats, d))));
@@ -116,14 +106,16 @@ d3.json("custom.geojson", (erro, jsonData)=>{
 
 var timeAxisScale = d3.scaleTime()
 	.domain([new Date(2017, 0, 1), new Date(2018, 0, 9)])
-	.range([0, Number(timeAxisSVG.attr("width"))])
+	.range([0, Number(timeAxisSVG.attr("width"))]);
 
-let timeAxis = d3.axisBottom(timeAxisScale);
-timeAxisSVG.call(timeAxis);
-
-let timeAxisBrush = d3.brushX();
-timeAxisSVG.call(timeAxisBrush);
-timeAxisBrush.on("end", function() {
-	timeRange = (d3.event.selection) ? d3.event.selection.map(d=>timeAxisScale.invert(d)) : null;
+var timeAxisFunction = function() {
+	shownTimeRange = (d3.event.selection) ? d3.event.selection.map(d=>timeAxisScale.invert(d)) : null;
 	if (shownAttribute) updateMap();
-});
+};
+
+timeAxisSVG.call(d3.axisBottom(timeAxisScale));
+timeAxisSVG.call(
+	d3.brushX()
+		.on("brush", timeAxisFunction)
+		.on("end", timeAxisFunction)
+);
