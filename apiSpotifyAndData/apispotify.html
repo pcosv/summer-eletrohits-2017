@@ -232,7 +232,7 @@
 						if(!csvGenres[tempRegion][genres[i]]){
 							csvGenres[tempRegion][genres[i]] = "";
 						}
-						csvGenres[tempRegion][genres[i]]+="\n"+tempRegion+","+genres[i]+","+subGenres[genres[i]]["count"]+","+tempDateAsString;
+						csvGenres[tempRegion][genres[i]]+="\n"+tempRegion+","+genres[i]+","+subGenres[genres[i]]["count"]+","+tempDateAsString.substring(5,7)+"/"+tempDateAsString.substring(8,10)+"/"+tempDateAsString.substring(2,4);
 						subGenres[genres[i]]["count"] = 0;
 					}
 					tempRegion = data[h]["Region"];
