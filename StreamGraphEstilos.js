@@ -10,7 +10,7 @@ d3.select("#stream").selectAll("input").on("change", function() {
 });
 
 d3.csv("paula.csv", (erro, csvData)=>{
-	console.log(csvData);
+	//console.log(csvData);
 	let nestedData = d3.nest()
 		.key(d => d.country)
 		.key(d => d.key)
@@ -34,7 +34,7 @@ d3.csv("paula.csv", (erro, csvData)=>{
 			}
 		}
 		let keys = [...nestedData["$" + this.value].keys()];
-		console.log(ranges);
+		//console.log(ranges);
 		
 		// Plotagem
 		segments.xAxisScale(
