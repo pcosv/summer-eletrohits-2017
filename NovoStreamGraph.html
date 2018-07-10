@@ -1,16 +1,26 @@
 <html>
 	<head>
 		<meta charset="utf-8">
+		<title>Summer Eletrohits 2017 - Gêneros por País</title>
 		<script src="https://d3js.org/d3.v4.min.js"></script>
 		<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 		<script src="http://www.cin.ufpe.br/~avsc/Arquivos/Outros/Chart-Library/Chart-Library.min.js"></script>
 	</head>
 	<body>
+		<p><b>Selecione o atributo a ser visualizado: </b>
+		<select>
+			<option value="global">Global</option>
+			<option value="br">Brasil</option>
+			<option value="ec">Equador</option>
+			<option value="fr">França</option>
+		</select>
+		</p>
 	<script>
 		var svgTag = d3.select("body").append("svg")
-			.attr("width", 1200)
-			.attr("height", 530);
-		var segments = new Segments(svgTag, null, null, 30, null);
+			.attr("width", 1260)
+			.attr("height", 640);
+		var segments = new Segments(svgTag, null, null, {top: 3, bottom: 20, left: 80, right: 7}, null);
+		//segments.rangePathGenerator().curve(d3.curveNatural);
 		
 		d3.csv("paula.csv", (erro, csvData)=>{
 			console.log(csvData);
@@ -19,13 +29,47 @@
 				.key(d => d.key)
 				.map(csvData);
 			console.log(nestedData["$global"]);
-			console.log(nestedData["$global"]["$blues"]);
-			let ranges = []
-			for (let key in nestedData["$global"]) {
-				//for (let 
-				ranges.push(nestedData["$global"][key].map(d=>));
-			}
-			console.log(ranges);
+			d3.selectAll("select").on("change", function() {
+				// Limpando tudo antes de plotar coisas
+				segments
+					.clear()
+					.yScale().domain([0, 1]);
+				
+				// Gerando os valores das ranges
+				let ranges = [];
+				let acumulo = Chart.genSequence(0, 53, 0);
+				let novoAcumulo;
+				for (let key in nestedData["$" + this.value]) {
+					if (key[0] == "$") {
+						novoAcumulo = nestedData["$" + this.value][key].map((d, i)=>(acumulo[i] + Number(d.value)));
+						ranges.push(acumulo.map((d, i)=>[acumulo[i], novoAcumulo[i]]));
+						acumulo = novoAcumulo;
+					}
+				}
+				let keys = [...nestedData["$" + this.value].keys()];
+				console.log(ranges);
+				
+				// Plotagem
+				segments.xAxisScale(
+					d3.scaleOrdinal()
+						.domain(Chart.genSequence(0, 53, 52))
+						.range(Chart.genSequence(0, 53, segments.width()))
+					)
+					.setRanges(ranges, {id: (_, i)=>keys[i]}, {
+						mouseover: function (d, i) {
+							segments.selection().append("text")
+								.text(segments.rangeSelection().filter((_, j)=>(j==i)).attr("id"))
+								.attr("class", "legendaRange")
+								.attr("x", 5)
+								.attr("dominant-baseline", "hanging");
+							d3.select(this).attr("stroke", "black");
+						},
+						mouseout: function (d, i) {
+							segments.selection().selectAll(".legendaRange").remove();
+							d3.select(this).attr("stroke", "transparent");
+						}
+					});
+			});
 		});
 			
 	</script>
