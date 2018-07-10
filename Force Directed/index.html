@@ -65,8 +65,9 @@ function createForce(monthV, sizeV){
   
   var dataMusic
 
-  d3.csv("data.csv", function(csv){
-
+  d3.csv("reducedData.csv", function(error, csv){
+	console.log(error);
+	console.log("passou pelo erro");
   dataFilter = d3.nest()
     .key(function(d) { return d.Region; })
     .key(function(d) { 
