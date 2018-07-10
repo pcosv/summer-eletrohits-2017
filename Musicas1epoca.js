@@ -96,7 +96,7 @@ d3.json("custom.geojson", (erro, jsonData)=>{
 				.map(d=>(minMax[d] = d3.extent(generateMeans(countriesMusic, musicFeats, d))));
 			
 			// Altera o mapa quando um novo atributo é selecionado
-			d3.selectAll("input").on("change", function() {
+			d3.select("#visualizacao").selectAll("input").on("change", function() {
 				shownAttribute = this.value;
 				updateMap();
 			});
