@@ -273,6 +273,45 @@
 			download(csvDownload, "paula.csv", "text/plain");
 		}
 
+		preCSV = 'id,region,date';
+		function countMonthlyTop200(){
+
+			tempRegion = dataCSV[0]["Region"];
+			tempDate = dataCSV[0]["Date"];
+			regionStreams = {};
+
+			for(var i = 0; i<dataCSV.length; i++){
+				if(dataCSV[i]["Region"] != "lt" && dataCSV[i]["Region"] != "lu" && dataCSV[i]["Region"] != "ee" && dataCSV[i]["Region"] != "sk" && dataCSV[i]["Date"].substring(0,4) != "2018"){
+
+					songID = dataCSV[i]["URL"].substring(31, 53);
+					if(tempRegion != dataCSV[i]["Region"] || tempDate.substring(5,7) != dataCSV[i]["Date"].substring(5,7) || (i+1) == dataCSV.length){
+						var items = Object.keys(regionStreams).map(function(key) {
+						  return [key, regionStreams[key]];
+						});
+
+						items.sort(function(first, second) {
+						  return second[1] - first[1];
+						});
+
+						items = items.slice(0, 200);
+						for (var j = 0; j < items.length; j++) {
+							preCSV+="\n"+items[j][0]+","+tempRegion+","+tempDate;
+						}
+
+						tempRegion = dataCSV[i]["Region"];
+						tempDate = dataCSV[i]["Date"];
+					}
+					if(regionStreams[songID]>=0){
+						regionStreams[songID]+= Number(dataCSV[i]["Streams"]);
+					} else {
+						regionStreams[songID] = 0;
+					}
+				}
+			}
+
+			download(preCSV, "leal.csv", "text/plain");
+		}
+
 	</script>
 </head>
 <body>
