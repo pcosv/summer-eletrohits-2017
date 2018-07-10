@@ -1,0 +1,33 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+		<script src="https://d3js.org/d3.v4.min.js"></script>
+		<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+		<script src="http://www.cin.ufpe.br/~avsc/Arquivos/Outros/Chart-Library/Chart-Library.min.js"></script>
+	</head>
+	<body>
+	<script>
+		var svgTag = d3.select("body").append("svg")
+			.attr("width", 1200)
+			.attr("height", 530);
+		var segments = new Segments(svgTag, null, null, 30, null);
+		
+		d3.csv("paula.csv", (erro, csvData)=>{
+			console.log(csvData);
+			let nestedData = d3.nest()
+				.key(d => d.country)
+				.key(d => d.key)
+				.map(csvData);
+			console.log(nestedData["$global"]);
+			console.log(nestedData["$global"]["$blues"]);
+			let ranges = []
+			for (let key in nestedData["$global"]) {
+				//for (let 
+				ranges.push(nestedData["$global"][key].map(d=>));
+			}
+			console.log(ranges);
+		});
+			
+	</script>
+	</body>
+</html>
