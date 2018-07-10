@@ -43,7 +43,9 @@ var svg = d3.select("#svgForce")
 var monthG = 1
 var sizeG = 120
 
-createForce(monthG, sizeG)
+setTimeout(function() {
+  createForce(monthG, sizeG);
+}, 5000);
 
 function prepareCreateForceMonth(monthV){
   monthG = monthV
@@ -58,23 +60,29 @@ function prepareCreateForce(){
   createForce(monthG, sizeG);
 }
 
+var lealcsv = new Array();
+
+d3.csv("leal.csv", function(error, csv){
+  lealcsv = csv;
+});
+
 function createForce(monthV, sizeV){
-  console.log(monthV)
-  console.log(sizeV)
+  // console.log(monthV)
+  // console.log(sizeV)
 
   
   var dataMusic
 
-  d3.csv("reducedData.csv", function(error, csv){
-	console.log(error);
-	console.log("passou pelo erro");
+  
+	// console.log(error);
+	// console.log("passou pelo erro");
   dataFilter = d3.nest()
-    .key(function(d) { return d.Region; })
+    .key(function(d) { return d.region; })
     .key(function(d) { 
-      return d.Date.substring(0, 7); 
+      return d.date.substring(0, 7); 
     })
-    .key(function(d) { return d["URL"]; })
-    .entries(csv);
+    .key(function(d) { return d["id"]; })
+    .entries(lealcsv);
 
     topMusic()
 
@@ -206,14 +214,14 @@ function createForce(monthV, sizeV){
 
     function ticked() {
       link
-          .attr("x1", function(d) { return 3/2*d.source.x; })
-          .attr("y1", function(d) { return 3/2*d.source.y; })
-          .attr("x2", function(d) { return 3/2*d.target.x; })
-          .attr("y2", function(d) { return 3/2*d.target.y; });
+          .attr("x1", function(d) { return d.source.x; })
+          .attr("y1", function(d) { return d.source.y; })
+          .attr("x2", function(d) { return d.target.x; })
+          .attr("y2", function(d) { return d.target.y; });
 
       node
-          .attr("cx", function(d) { return 3/2*d.x; })
-          .attr("cy", function(d) { return 3/2*d.y; });
+          .attr("cx", function(d) { return d.x; })
+          .attr("cy", function(d) { return d.y; });
     }
 
   function dragstarted(d) {
@@ -234,7 +242,7 @@ function createForce(monthV, sizeV){
   }
 
 
-  });
+  
 
 }
 

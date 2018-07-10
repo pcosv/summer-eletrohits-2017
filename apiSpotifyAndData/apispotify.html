@@ -300,6 +300,10 @@
 
 						tempRegion = dataCSV[i]["Region"];
 						tempDate = dataCSV[i]["Date"];
+						songIDs = Object.keys(regionStreams);
+						for (var k = 0; k < songIDs.length; k++) {
+							regionStreams[songIDs[k]] = 0;
+						}
 					}
 					if(regionStreams[songID]>=0){
 						regionStreams[songID]+= Number(dataCSV[i]["Streams"]);
