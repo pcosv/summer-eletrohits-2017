@@ -78,16 +78,19 @@ var minMax;
 //--------------- CÓDIGO ---------------
 
 d3.json("custom.geojson", (erro, jsonData)=>{
+	console.log(erro);
 	//console.log(jsonData);
 	mapa.setMap(jsonData, {id: (d, i)=>d.properties.name});
 	let countriesList = jsonData.features.map(d=>d.properties.iso_a2.toLowerCase());
 	d3.csv("/Datasets/mapData.csv", (erro, csvData)=>{
+		console.log(erro);
 		csvData.map(d=>{
 			d.Streams = Number(d.Streams);
 		});//Formatação do número de streams
 		countriesMusic = getCountriesMusics(countriesList, csvData);
 		//console.log(countriesMusic);
 		d3.csv("/Datasets/featuresdf.csv", (erro, csvFeatures)=>{
+			console.log(erro);
 			musicFeats = [];
 			csvFeatures.map(d => musicFeats[d.id] = d);
 			
