@@ -42,7 +42,7 @@ function generateMeans(countriesMusic, musicFeats, attribute, period) {
 function updateMap() {
 	let averageFeats = generateMeans(countriesMusic, musicFeats, shownAttribute, shownTimeRange);
 	mapa.colorScale().domain(minMax[shownAttribute]);
-	mapa.fillFunction(d=>(d ? mapa.colorScheme()(mapa.colorScale()(mapa.fillValue()(d))) : "lightgray"))
+	mapa.fillFunction(d=>(d ? mapa.colorScheme()(mapa.colorScale()(mapa.fillValue()(d))) : "#00000010"))
 		.setData(averageFeats, {stroke: d=>(d ? "black" : "transparent")}, {
 			mouseover: (d, i)=>{
 				mapa.selection().append("text")
