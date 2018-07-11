@@ -81,7 +81,7 @@ d3.json("custom.geojson", (erro, jsonData)=>{
 	//console.log(jsonData);
 	mapa.setMap(jsonData, {id: (d, i)=>d.properties.name});
 	let countriesList = jsonData.features.map(d=>d.properties.iso_a2.toLowerCase());
-	d3.csv("mapData.csv", (erro, csvData)=>{
+	d3.csv("summer-eletrohits-2017/Datasets/mapData.csv", (erro, csvData)=>{
 		csvData.map(d=>{
 			d.Streams = Number(d.Streams);
 		});//Formatação do número de streams
