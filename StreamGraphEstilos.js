@@ -9,7 +9,7 @@ d3.select("#stream").selectAll("input").on("change", function() {
 	streamMode = (this.value == "Linear");
 });
 
-d3.csv("paula.csv", (erro, csvData)=>{
+d3.csv("/Datasets/paula.csv", (erro, csvData)=>{
 	//console.log(csvData);
 	let nestedData = d3.nest()
 		.key(d => d.country)

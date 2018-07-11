@@ -31,6 +31,7 @@ function generateMeans(countriesMusic, musicFeats, attribute, period) {
 	return countriesMusic.map(d=>{
 		if (d) {
 			let queryResult = queryDate(d, period[0], period[1]);
+			//console.log(queryResult);
 			return queryResult.reduce((output, cur, i)=>(output + cur.Streams * musicFeats[cur.URL][attribute]), 0)
 					/ queryResult.reduce((output, cur)=>(output + cur.Streams), 0);
 		}
@@ -80,14 +81,13 @@ d3.json("custom.geojson", (erro, jsonData)=>{
 	//console.log(jsonData);
 	mapa.setMap(jsonData, {id: (d, i)=>d.properties.name});
 	let countriesList = jsonData.features.map(d=>d.properties.iso_a2.toLowerCase());
-	d3.csv("filteredData.csv", (erro, csvData)=>{
+	d3.csv("/Datasets/mapData.csv", (erro, csvData)=>{
 		csvData.map(d=>{
 			d.Streams = Number(d.Streams);
-			d.URL = d.URL.substring(31, d.URL.length - 1);
-		});//Formatação do número de streams e da URL
+		});//Formatação do número de streams
 		countriesMusic = getCountriesMusics(countriesList, csvData);
 		//console.log(countriesMusic);
-		d3.csv("featuresdf.csv", (erro, csvFeatures)=>{
+		d3.csv("/Datasets/featuresdf.csv", (erro, csvFeatures)=>{
 			musicFeats = [];
 			csvFeatures.map(d => musicFeats[d.id] = d);
 			
