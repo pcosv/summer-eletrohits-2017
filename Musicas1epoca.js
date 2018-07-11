@@ -42,7 +42,7 @@ function generateMeans(countriesMusic, musicFeats, attribute, period) {
 function updateMap() {
 	let averageFeats = generateMeans(countriesMusic, musicFeats, shownAttribute, shownTimeRange);
 	mapa.colorScale().domain(minMax[shownAttribute]);
-	mapa.fillFunction(d=>(d ? mapa.colorScheme()(mapa.colorScale()(mapa.fillValue()(d))) : "#00000010"))
+	mapa.fillFunction(d=>(d ? mapa.colorScheme()(mapa.colorScale()(mapa.fillValue()(d))) : "#00000020"))
 		.setData(averageFeats, {stroke: d=>(d ? "black" : "transparent")}, {
 			mouseover: (d, i)=>{
 				mapa.selection().append("text")
@@ -66,7 +66,7 @@ var shownTimeRange;
 
 var mapa = new Map(mapSelection, null, null, 2, null)
 	.projection(d3.geoNaturalEarth1())
-	.fillFunction((d, i)=>"#00000010")
+	.fillFunction((d, i)=>"#00000020")
 	.fillValue((d, i)=>d)
 	.colorScheme(d3.scaleLinear().domain([0, .5, 1]).range(["#fde0dd", "#fa9fb5", "#c51b8a"]));
 
