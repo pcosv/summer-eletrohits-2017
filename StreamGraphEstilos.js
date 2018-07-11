@@ -60,7 +60,7 @@ d3.select("#stream").selectAll("input").on("change", function() {
 	updateStream();
 });
 
-d3.csv("/Datasets/paula.csv", (erro, csvData)=>{
+d3.csv("summer-eletrohits-2017//Datasets/paula.csv", (erro, csvData)=>{
 	//console.log(csvData);
 	nestedData = d3.nest()
 		.key(d => d.country)
