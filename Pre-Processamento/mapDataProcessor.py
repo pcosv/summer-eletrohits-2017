@@ -12,9 +12,11 @@ d = str(Path().resolve().parent)
 with open(d + "\\Datasets\\featuresdf.csv", newline = '', encoding="utf-8") as features:
 	spamreader = csv.reader(features, delimiter = ',')
 	# Set das melhores músicas. Tambem contem "id", mas não é problema pq todas as urls tem bem mais que 2 caracteres
-	ids = set()
+	ids = dict()
+	newId = -1
 	for row in spamreader:
-		ids.add(row[0])
+		ids[row[0]] = newId
+		newId += 1
 	print("IDs das melhores músicas:", ids)
 	print("Nº de IDs:", len(ids))
 	
@@ -28,5 +30,15 @@ with open(d + "\\Datasets\\featuresdf.csv", newline = '', encoding="utf-8") as f
 			for row in spamreader:
 				# As IDs tem um caractere faltando no final, então desconsidero um das URLs pra compensar
 				if row[4][31:-1] in ids:
-					row[4] = row[4][31:-1]
+					# Substituição da id por um índice
+					row[4] = ids[row[4][31:-1]]
+					
+					# Redução do tamanho da data
+					date = row[5].split('-')
+					date[0] = date[0][3]
+					date[1] = int(date[1]) - 1
+					date[2] = int(date[2])
+					row[5] = date[0] + '-' + str(date[1]) + '-' + str(date[2])
+					
+					# Coloca apenas os atributos importantes na saída
 					spamwriter.writerow(row[3:])

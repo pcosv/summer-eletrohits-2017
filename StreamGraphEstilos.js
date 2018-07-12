@@ -43,7 +43,7 @@ function updateStream() {
 
 var segmentsSVG = d3.select("body").append("svg")
 	.attr("width", 1260)
-	.attr("height", 640);
+	.attr("height", 600);
 var segments = new Segments(segmentsSVG, null, null, {top: 3, bottom: 20, left: 10, right: 7}, null);
 let colorrange = ["#8dd3c7", "#ffffb3", "#bebada", "#fb8072", "#80b1d3", "#fdb462", "#b3de69", "#fccde5", "#1f78b4", "#33a02c", "#ffff33", "#fb9a99", "#a6cee3", "#984ea3", "#d9d9d9"];
 segments.rangeColorScale(d3.scaleLinear()

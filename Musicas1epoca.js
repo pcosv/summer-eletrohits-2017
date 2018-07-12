@@ -16,10 +16,9 @@ function calculateMean(weights, values) {
 
 // Busca em um array nested todos os valores mapeados por uma data dentro de um determinado intervalo.
 function queryDate(nest, minDate, maxDate) {
-	let output = []
-	let formatter = d3.format("02");
+	let output = [];
 	for (let currDate = new Date(minDate); currDate <= maxDate; currDate.setHours(24)) {
-		let currDateString = "$" + currDate.getFullYear() + "-" + formatter(currDate.getMonth() + 1) + "-" + formatter(currDate.getDate());
+		let currDateString = "$" + (currDate.getFullYear() - 2010) + "-" + currDate.getMonth() + "-" + currDate.getDate();
 		if (nest[currDateString]) output.push(nest[currDateString]);
 	}
 	return d3.merge(output);
@@ -60,7 +59,7 @@ var timeAxisSVG = d3.select("#timeAxis");
 
 var mapSelection = d3.select("body").append("svg")
 	.attr("width", timeAxisSVG.attr("width"))
-	.attr("height", 530);
+	.attr("height", 551);
 
 var shownTimeRange;
 
@@ -86,14 +85,13 @@ d3.json("custom.geojson", (erro, jsonData)=>{
 			d.Streams = Number(d.Streams);
 		});//Formatação do número de streams
 		countriesMusic = getCountriesMusics(countriesList, csvData);
-		//console.log(countriesMusic);
 		d3.csv("Datasets/featuresdf.csv", (erro, csvFeatures)=>{
-			musicFeats = [];
-			csvFeatures.map(d => musicFeats[d.id] = d);
+			musicFeats = csvFeatures
 			
 			minMax = [];
 			["danceability", "energy", "loudness", "speechiness", "acousticness", "instrumentalness", "liveness", "valence", "tempo"]
 				.map(d=>(minMax[d] = d3.extent(generateMeans(countriesMusic, musicFeats, d))));
+			//console.log(minMax);
 			
 			// Altera o mapa quando um novo atributo é selecionado
 			d3.select("#visualizacao").selectAll("input").on("change", function() {
