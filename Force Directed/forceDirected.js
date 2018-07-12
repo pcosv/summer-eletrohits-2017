@@ -83,9 +83,9 @@ function createForce(monthV, sizeV){
 
     }
 
-  c = ["ec", "fr", "ar", "fi", "no", "it", "ph", "tw", "nz", "ee", "tr", "us", "sv", "cr", "de", "cl", "jp", "br", "hn", "gt", "ch", "hu", "ca", "pe", "be", "my", "dk", "bo", "pl", "at", "pt", "se", "mx", "pa", "uy", "is", "es", "cz", "ie", "nl", "co", "sg", "id", "do", "gb", "py", "au", "lv", "gr", "hk", "global"];
+  c = ["ec", "fr", "ar", "fi", "no", "it", "ph", "tw", "nz", "ee", "tr", "us", "sv", "cr", "de", "cl", "jp", "br", "hn", "gt", "ch", "hu", "ca", "pe", "be", "my", "dk", "bo", "pl", "at", "pt", "se", "mx", "pa", "uy", "is", "es", "cz", "ie", "nl", "co", "sg", "id", "do", "gb", "py", "au", "lv", "gr", "hk"];
 
-  countries = ["Equador", "França", "Argentina", "Finlândia", "Noruega", "Itália", "Filipinas", "Taiwan", "Nova Zelândia", "Estônia", "Turquia", "Estados Unidos da América", "El Salvador", "Costa Rica", "Alemanha", "Chile", "Japão", "Brasil", "Honduras", "Guatemala", "Suíça", "Hungria", "Canadá", "Peru", "Bélgica", "Malásia", "Dinamarca", "Bolívia", "Polônia", "Áustria", "Portugal", "Suécia", "México", "Panamá", "Uruguai", "Islândia", "Espanha", "República Tcheca", "Irlanda", "Holanda", "Colômbia", "Singapura", "Indonésia", "República Dominicana", "Reino Unido ", "Paraguai", "Austrália", "Letônia", "Grécia", "Hong-Kong", "global"];
+  countries = ["Equador", "França", "Argentina", "Finlândia", "Noruega", "Itália", "Filipinas", "Taiwan", "Nova Zelândia", "Estônia", "Turquia", "Estados Unidos da América", "El Salvador", "Costa Rica", "Alemanha", "Chile", "Japão", "Brasil", "Honduras", "Guatemala", "Suíça", "Hungria", "Canadá", "Peru", "Bélgica", "Malásia", "Dinamarca", "Bolívia", "Polônia", "Áustria", "Portugal", "Suécia", "México", "Panamá", "Uruguai", "Islândia", "Espanha", "República Tcheca", "Irlanda", "Holanda", "Colômbia", "Singapura", "Indonésia", "República Dominicana", "Reino Unido ", "Paraguai", "Austrália", "Letônia", "Grécia", "Hong-Kong"];
 
   //Luxemburgo, Lituania, Estonia, Eslovaquia
 
