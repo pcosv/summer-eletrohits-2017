@@ -93,7 +93,7 @@ function createForce(monthV, sizeV){
   countriesGroup = [1, 3, 1, 3, 3, 3, 4, 4, 5, 3, 3, 2, 2, 2, 3, 
   1, 4, 1, 2, 2, 3, 3, 2, 1, 3, 4, 3, 1, 3, 3, 3, 3, 2, 
   2, 1, 3, 3, 3, 3, 3, 1, 4, 4, 2, 3, 1, 5, 3, 3,
-   4, 6];
+   4];
 
   var elements = [];
   for(var i = 0 ; i < countries.length; i++){
