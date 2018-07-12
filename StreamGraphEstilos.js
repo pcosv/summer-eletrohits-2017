@@ -1,6 +1,6 @@
 // Gera a tabels de legendas do streamgraph
 function genLabelTable() {
-	segments.labelTable(new LabelTable(segments, "tabelaLegendas", {x: segments.width() + 8, y: segments.height() / 2 - 150}, 0, {width: 110, height: 300})
+	segments.labelTable(new LabelTable(segments, "tabelaLegendas", {x: segments.width() + 5, y: segments.height() / 2 - 150}, 0, {width: 110, height: 300})
 		.setValues(colorrange, ["latin", "pop", "country", "hip hop", "folk", "classical", "metal", "punk", "rock", "jazz", "blues", "r&b", "edm", "reggae", "others"]));
 }
 

@@ -1,7 +1,15 @@
+function genLabelTable() {
+	// Para criar uma labelTable eu preciso de um objeto Chart
+	var dummychart = new Chart(svg);
+	var labelTable = new LabelTable(new LabelTable(dummychart, "tabelaLegendas", {x: 0, y: height / 2 - 60}, 0, {width: 240, height: 120})
+		.setValues(["#A100B2", "#00B52D", "#FFA900", "#004ECC", "#B21900"], ["America do Sul", "Americas do Norte e Central", "Europa", "Asia", "Oceania"]));
+}
+
 var svg = d3.select("#svgForce")
     width = +svg.attr("width"),
     height = +svg.attr("height");
 
+genLabelTable();
 
 var monthG = 1
 var sizeG = 120
@@ -19,8 +27,9 @@ function prepareCreateForceSize(sizeV){
 }
 
 function prepareCreateForce(){
-  svg.selectAll("*").remove();
-  createForce(monthG, sizeG);
+	svg.selectAll("*").remove();
+	genLabelTable();
+	createForce(monthG, sizeG);
 }
 
 var lealcsv = new Array();
