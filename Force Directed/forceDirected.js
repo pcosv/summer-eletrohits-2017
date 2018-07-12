@@ -156,8 +156,18 @@ function createForce(monthV, sizeV){
       .enter().append("circle")
         .attr("r", 7)
         .attr("fill", function(d) { 
-
-          return color(d.group); 
+          if (d.group == 1){
+            return "#A100B2"; 
+          }else if (d.group == 2){
+            return "#00B52D"; 
+          }else if (d.group == 3){
+            return "#FFA900";   
+          }else if (d.group == 4){
+            return "#004ECC"; 
+          }else{
+            return "#B21900"; 
+          }
+          
         })
         .call(d3.drag()
             .on("start", dragstarted)
