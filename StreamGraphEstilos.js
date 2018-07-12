@@ -1,8 +1,16 @@
+// Gera a tabels de legendas do streamgraph
+function genLabelTable() {
+	segments.labelTable(new LabelTable(segments, "tabelaLegendas", {x: segments.width() + 8, y: segments.height() / 2 - 150}, 0, {width: 110, height: 300})
+		.setValues(colorrange, ["latin", "pop", "country", "hip hop", "folk", "classical", "metal", "punk", "rock", "jazz", "blues", "r&b", "edm", "reggae", "others"]));
+}
+
 function updateStream() {
 	// Limpando tudo antes de plotar coisas
 	segments
 		.clear()
 		.yScale().domain([0, 1]);
+	
+	genLabelTable();
 	
 	// Gerando os valores das ranges
 	let ranges = [];
@@ -44,14 +52,15 @@ function updateStream() {
 var segmentsSVG = d3.select("body").append("svg")
 	.attr("width", 1260)
 	.attr("height", 610);
-var segments = new Segments(segmentsSVG, null, null, {top: 3, bottom: 20, left: 10, right: 7}, null);
-let colorrange = ["#8dd3c7", "#ffffb3", "#bebada", "#fb8072", "#80b1d3", "#fdb462", "#b3de69", "#fccde5", "#1f78b4", "#33a02c", "#ffff33", "#fb9a99", "#a6cee3", "#984ea3", "#d9d9d9"];
+var segments = new Segments(segmentsSVG, null, null, {top: 3, bottom: 20, left: 8, right: 120}, null);
+var colorrange = ["#8dd3c7", "#ffffb3", "#bebada", "#fb8072", "#80b1d3", "#fdb462", "#b3de69", "#fccde5", "#1f78b4", "#33a02c", "#ffff33", "#fb9a99", "#a6cee3", "#984ea3", "#d9d9d9"];
 segments
 	.rangeColorScale(d3.scaleLinear()
 		.domain(Chart.genSequence(0, colorrange.length, colorrange.length - 1))
 		.range(colorrange)
 	);
 //	.rangePathGenerator().curve(d3.curveNatural);
+genLabelTable();
 var streamMode = true;
 var shownCountry;
 var nestedData;

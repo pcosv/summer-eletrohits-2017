@@ -30,7 +30,6 @@ function generateMeans(countriesMusic, musicFeats, attribute, period) {
 	return countriesMusic.map(d=>{
 		if (d) {
 			let queryResult = queryDate(d, period[0], period[1]);
-			//console.log(queryResult);
 			return queryResult.reduce((output, cur, i)=>(output + cur.Streams * musicFeats[cur.URL][attribute]), 0)
 					/ queryResult.reduce((output, cur)=>(output + cur.Streams), 0);
 		}
@@ -44,23 +43,18 @@ function generateMinMax(countriesMusic, musicFeats, attribute) {
 	let mediasDiarias = [];
 	countriesMusic.map(d=>{
 		if (d) {
-			console.log(d);
 			for (e in d) {
 				if (e[0] == '$') mediasDiarias.push(d[e].reduce((output, cur, i)=>(output + cur.Streams * musicFeats[cur.URL][attribute]), 0)
 									/ d[e].reduce((output, cur)=>(output + cur.Streams), 0));
 			}
-			//let queryResult = queryDate(d, new Date(2017, 0, 1), new Date(2018, 0, 9));
-			//console.log(queryResult);
-			//return queryResult.reduce((output, cur, i)=>(output + cur.Streams * musicFeats[cur.URL][attribute]), 0)
-			//		/ queryResult.reduce((output, cur)=>(output + cur.Streams), 0);
 		}
 	});
-	console.log(mediasDiarias);
 	return d3.extent(mediasDiarias);
 }
 
 //Atualiza o mapa
 function updateMap() {
+	if (mapa.labelTable()) mapa.labelTable().selection().remove();
 	let averageFeats = generateMeans(countriesMusic, musicFeats, shownAttribute, shownTimeRange);
 	mapa.colorScale().domain(minMax[shownAttribute]);
 	mapa.fillFunction(d=>(d ? mapa.colorScheme()(mapa.colorScale()(mapa.fillValue()(d))) : "#00000020"))
@@ -68,6 +62,8 @@ function updateMap() {
 			mouseover: (d, i)=>{
 				mapa.selection().append("text")
 					.text(d ? (mapa.pathSelection().filter((_, j)=>(j==i)).attr("id") + ": " + d3.format(".3f")(d)) : undefined)
+					.attr("x", "5")
+					.attr("y", "5")
 					.attr("class", "legendaMapa")
 					.attr("dominant-baseline", "hanging");
 				},
@@ -92,7 +88,7 @@ var mapa = new Map(mapSelection, null, null, 2, null)
 	.projection(d3.geoNaturalEarth1())
 	.fillFunction((d, i)=>"#00000020")
 	.fillValue((d, i)=>d)
-	.colorScheme(d3.scaleLinear().domain([0, .25, .5, .75, 1]).range(["#002000", "#00ff80", "#ffffff", "#ff0080", "#200000"]))
+	.colorScheme(d3.scaleLinear().domain([0, .25, .5, .75, 1]).range(["#000020", "#0090ff", "#ffffff", "#ff9000", "#200000"]))
 	//.colorScheme(d=>((d < .5) ? d3.interpolateGreens((.5-d) * 2) : d3.interpolateReds((d-.5) * 2)));
 
 var shownAttribute;
@@ -103,7 +99,6 @@ var minMax;
 //--------------- CÓDIGO ---------------
 
 d3.json("custom.geojson", (erro, jsonData)=>{
-	//console.log(jsonData);
 	mapa.setMap(jsonData, {id: (d, i)=>d.properties.name});
 	let countriesList = jsonData.features.map(d=>d.properties.iso_a2.toLowerCase());
 	d3.csv("Datasets/mapData.csv", (erro, csvData)=>{
@@ -113,12 +108,10 @@ d3.json("custom.geojson", (erro, jsonData)=>{
 		countriesMusic = getCountriesMusics(countriesList, csvData);
 		d3.csv("Datasets/featuresdf.csv", (erro, csvFeatures)=>{
 			musicFeats = csvFeatures
-			console.log(musicFeats);
 			
 			minMax = [];
 			["danceability", "energy", "loudness", "speechiness", "acousticness", "instrumentalness", "liveness", "valence", "tempo"]
 				.map(d=>(minMax[d] = generateMinMax(countriesMusic, musicFeats, d)));
-			console.log(minMax);
 			
 			// Altera o mapa quando um novo atributo é selecionado
 			d3.select("#visualizacao").selectAll("input").on("change", function() {

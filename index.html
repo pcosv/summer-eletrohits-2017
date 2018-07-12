@@ -1,11 +1,15 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Summer Eletrohits 2017 - Mapa de Features</title>
+	<title>Summer Eletrohits 2017</title>
 	<script src="https://d3js.org/d3.v4.min.js"></script>
 	<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 	<script src="https://www.cin.ufpe.br/~avsc/Arquivos/Outros/Chart-Library/Chart-Library.min.js"></script>
 	<style type="text/css">
+		p {
+			text-align: justify
+		}
+		
 		svg {
 			background-color:white;
 		}
@@ -24,6 +28,31 @@
 	</style>
 </head>
 <body>
+	<h1 style="text-align: center"><b>Summer Eletrohits 2017</b></h1>
+	<p>Este projeto foi desenvolvido para a cadeira de Visualização de Dados do Centro de Informática (CIn) da UFPE.<br>
+	Trata-se de um conjunto de visualizações criado com o objetivo de avaliar como o gosto musical da população de diversos países é afetado pela localização e pela época do ano. Para isso, foram usadas informações sobre a quantidade diária de streams das músicas mais ouvidas no Spotify, junto com métricas dessas músicas fornecidas pela API do mesmo.</p>
+	<p>A informações foram obtidas dos seguintes datasets:
+	<ul>
+	<li>200 músicas mais ouvidas no Spotify em 53 países no ano de 2017: <a href="https://www.kaggle.com/edumucelli/spotifys-worldwide-daily-song-ranking">https://www.kaggle.com/edumucelli/spotifys-worldwide-daily-song-ranking</a></li>
+	<li>Características das 100 músicas mais ouvidas no Spotify no ano de 2017: <a href="https://www.kaggle.com/nadintamer/top-tracks-of-2017">https://www.kaggle.com/nadintamer/top-tracks-of-2017</a></li>
+	</ul>
+	O código deste projeto se encontra em: <a href="https://github.com/pcosv/summer-eletrohits-2017">https://github.com/pcosv/summer-eletrohits-2017</a>
+	</p>
+	
+	<h2 style="text-align: center"><b>Mapa de Features</b></h2>
+	<p>O mapa abaixo mostra as médias da métrica selecionada durante o período selecionado no eixo dos meses para as músicas de cada país. As métricas exibidas são as seguintes:
+	<ul>
+	<li><b>Danceability: </b>Representa o quanto uma música é dançável. Pode variar de 0 a 1.</li>
+	<li><b>Energy: </b>Representa a percepção de intensidade e atividade na música. Pode variar de 0 a 1.</li>
+	<li><b>Loudness: </b>A intensidade sonora média da música, medida em decibéis. Geralmente varia de -60dB a 0dB.</li>
+	<li><b>Speechiness: </b>Representa a presença de palavras faladas na música, quanto mais próximo de 1, mais palavras. Pode variar de 0 a 1.</li>
+	<li><b>Acousticness: </b>Uma escala de confiança de que o áudio é acústico. Varia de 0 a 1.</li>
+	<li><b>Instrumentalness: </b>Representa a predominância de instrumentos sobre voz na música. Varia de 0 a 1.</li>
+	<li><b>Liveness: </b>Probabilidade da música ter sido gravada em um show, quanto mais próximo da 1, maior a probabilidade. Varia de 0 a 1.</li>
+	<li><b>Valence: </b>Representa a positividade de uma música (sentimentos de alegria e euforia X sentimentos de tristeza ou raiva). Varia de 0 a 1.</li>
+	<li><b>Tempo: </b>A frequencia das batidas da música, em batidas por minuto (BPM).</li>
+	</ul>
+	</p>
 	<p id="visualizacao"><b>Selecione o atributo a ser visualizado: </b>
 		<input type="radio" id="danceability" name="visualizacao" value="danceability">Danceability</input>
 		<input type="radio" id="energy" name="visualizacao" value="energy">Energy</input>
@@ -35,10 +64,13 @@
 		<input type="radio" id="valence" name="visualizacao" value="valence">Valence</input>
 		<input type="radio" id="tempo" name="visualizacao" value="tempo">Tempo</input>
 	</p>
-	<svg id="timeAxis" width="1260" height="25">
-	</svg>
+	<svg id="timeAxis" width="1260" height="25"></svg>
 	<script src="Musicas1epoca.js"></script>
-	<p><b>Selecione o atributo a ser visualizado: </b>
+	
+	<h2 style="text-align: center"><b>Streamgraph de Estilos Músicais</b></h2>
+	<p>O gráfico abaixo é um streamgraph que mostra a predominância de cada estilo musical por semana ao longo do ano.</p>
+	<p>A opção "linear" mostra a proporção direta entre cada estilo, enquanto a opção "raiz" exibe as raizes quadradas de cada frequência para destacar valores menos frequentes.</p>
+	<p><b>Selecione o país a ser visualizado: </b>
 		<select id="selectStream">
 			<option></option>
 			<option value="global">Global</option>
@@ -101,18 +133,22 @@
 		<input type="radio" name="stream" value="Raiz quadrada">Raiz</input>
 	</p>
 	<script src="StreamGraphEstilos.js"></script>
-	<p>Escolha o mês que deseja usar para gerar o grafo</p>
+	
+	<h2 style="text-align: center"><b>Gráfico Force Directed</b></h2>
+	<p>Escolha o mês que deseja usar para gerar o grafo
 	<div id="svgForceSlideContainer1">
 	  <input type="range" min="1" max="12" value="1" class="slider" onchange="prepareCreateForceMonth(this.value)">
 	</div>
-	<p>Escolha o threshhold de músicas iguais por país</p>
+	</p>
+	<p>Escolha o threshhold de músicas iguais por país
 	<div id="svgForceSlideContainer2">
 	  <input type="range" min="1" max="200" value="120" class="slider" onchange="prepareCreateForceSize(this.value)">
 	</div>
+	</p>
 	<div>
 	<input type="button" value="Gerar Gráfico" onclick="prepareCreateForce();" />
 	</div>
-	<svg id="svgForce" width="960" height="600"></svg>
+	<svg id="svgForce" width="1260" height="470"></svg>
 	<script src="Force Directed/forceDirected.js"></script>
 </body>
 </html>
