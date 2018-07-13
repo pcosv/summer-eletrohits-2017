@@ -137,13 +137,13 @@
 	<h2 style="text-align: center"><b>Gráfico Force Directed</b></h2>
 	<p>Escolha o mês que deseja usar para gerar o grafo
 	<div id="svgForceSlideContainer1">
-	  <input type="range" min="1" max="12" value="1" class="slider" onchange="prepareCreateForceMonth(this.value)">
+	  Janeiro 2017&nbsp;<input type="range" min="1" max="12" value="1" class="slider" onchange="prepareCreateForceMonth(this.value)">&nbsp;Dezembro 2017
 	</div>
 	</p>
-	<p>Escolha o threshhold de músicas iguais por país
+	<p>Escolha o mínimo de músicas iguais por país
 	<div id="svgForceSlideContainer2">
-	  <input type="range" min="1" max="200" value="120" class="slider" onchange="prepareCreateForceSize(this.value)">
-	</div>
+	  0&nbsp;<input type="range" min="1" max="200" value="120" class="slider" onchange="prepareCreateForceSize(this.value)">
+	</div>&nbsp;200
 	</p>
 	<div>
 	<input type="button" value="Gerar Gráfico" onclick="prepareCreateForce();" />
