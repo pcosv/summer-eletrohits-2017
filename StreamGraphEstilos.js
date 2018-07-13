@@ -1,5 +1,5 @@
 // Gera a tabels de legendas do streamgraph
-function genLabelTable() {
+function genStreamLabels() {
 	segments.labelTable(new LabelTable(segments, "tabelaLegendas", {x: segments.width() + 5, y: segments.height() / 2 - 150}, 0, {width: 110, height: 300})
 		.setValues(colorrange, ["latin", "pop", "country", "hip hop", "folk", "classical", "metal", "punk", "rock", "jazz", "blues", "r&b", "edm", "reggae", "others"]));
 }
@@ -10,7 +10,7 @@ function updateStream() {
 		.clear()
 		.yScale().domain([0, 1]);
 	
-	genLabelTable();
+	genStreamLabels();
 	
 	// Gerando os valores das ranges
 	let ranges = [];
@@ -60,7 +60,7 @@ segments
 		.range(colorrange)
 	);
 //	.rangePathGenerator().curve(d3.curveNatural);
-genLabelTable();
+genStreamLabels();
 var streamMode = true;
 var shownCountry;
 var nestedData;
